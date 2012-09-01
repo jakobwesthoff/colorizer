@@ -56,23 +56,39 @@ Currently the following tags are supported:
         <th>Color Tag</th><th>Generated ANSI Code</th>
     </tr>
     <tr>
-        <td>&lt;red&gt…&lt;/red&gt;</td><td>\033[0;31m</td>
-        <td>&lt;green&gt…&lt;/green&gt;</td><td>\033[0;32m</td>
-        <td>&lt;yellow&gt…&lt;/yellow&gt;</td><td>\033[0;33m</td>
-        <td>&lt;blue&gt…&lt;/blue&gt;</td><td>\033[0;34m</td>
-        <td>&lt;purple&gt…&lt;/purple&gt;</td><td>\033[0;35m</td>
-        <td>&lt;cyan&gt…&lt;/cyan&gt;</td><td>\033[0;36m</td>
-        <td>&lt;light-red&gt…&lt;/light-red&gt;</td><td>\033[1;31m</td>
-        <td>&lt;light-green&gt…&lt;/light-green&gt;</td><td>\033[1;32m</td>
-        <td>&lt;light-yellow&gt…&lt;/light-yellow&gt;</td><td>\033[1;33m</td>
-        <td>&lt;light-blue&gt…&lt;/light-blue&gt;</td><td>\033[1;34m</td>
-        <td>&lt;light-purple&gt…&lt;/light-purple&gt;</td><td>\033[1;35m</td>
-        <td>&lt;light-cyan&gt…&lt;/light-cyan&gt;</td><td>\033[1;36m</td>
-        <td>&lt;gray&gt…&lt;/gray&gt;</td><td>\033[1;30m</td>
-        <td>&lt;light-gray&gt…&lt;/light-gray&gt;</td><td>\033[0;37m</td>
-        <td>&lt;white&gt…&lt;/white&gt;</td><td>\033[1;37m</td>
-        <td>&lt;black&gt…&lt;/black&gt;</td><td>\033[0;30m</td>
-        <td>&lt;none&gt…&lt;/none&gt;</td><td>\033[0m</td>
+        <td>&lt;red&gt;…&lt;/red&gt;</td><td>\033[0;31m</td>
+    </tr>
+        <td>&lt;green&gt;…&lt;/green&gt;</td><td>\033[0;32m</td>
+    </tr>
+        <td>&lt;yellow&gt;…&lt;/yellow&gt;</td><td>\033[0;33m</td>
+    </tr>
+        <td>&lt;blue&gt;…&lt;/blue&gt;</td><td>\033[0;34m</td>
+    </tr>
+        <td>&lt;purple&gt;…&lt;/purple&gt;</td><td>\033[0;35m</td>
+    </tr>
+        <td>&lt;cyan&gt;…&lt;/cyan&gt;</td><td>\033[0;36m</td>
+    </tr>
+        <td>&lt;light-red&gt;…&lt;/light-red&gt;</td><td>\033[1;31m</td>
+    </tr>
+        <td>&lt;light-green&gt;…&lt;/light-green&gt;</td><td>\033[1;32m</td>
+    </tr>
+        <td>&lt;light-yellow&gt;…&lt;/light-yellow&gt;</td><td>\033[1;33m</td>
+    </tr>
+        <td>&lt;light-blue&gt;…&lt;/light-blue&gt;</td><td>\033[1;34m</td>
+    </tr>
+        <td>&lt;light-purple&gt;…&lt;/light-purple&gt;</td><td>\033[1;35m</td>
+    </tr>
+        <td>&lt;light-cyan&gt;…&lt;/light-cyan&gt;</td><td>\033[1;36m</td>
+    </tr>
+        <td>&lt;gray&gt;…&lt;/gray&gt;</td><td>\033[1;30m</td>
+    </tr>
+        <td>&lt;light-gray&gt;…&lt;/light-gray&gt;</td><td>\033[0;37m</td>
+    </tr>
+        <td>&lt;white&gt;…&lt;/white&gt;</td><td>\033[1;37m</td>
+    </tr>
+        <td>&lt;black&gt;…&lt;/black&gt;</td><td>\033[0;30m</td>
+    </tr>
+        <td>&lt;none&gt;…&lt;/none&gt;</td><td>\033[0m</td>
     </tr>
 </table>
 
