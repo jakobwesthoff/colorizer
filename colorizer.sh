@@ -80,7 +80,7 @@ COLORIZER_process_input() {
     local result=""
 
     result="${processed%%<*}"
-    if [ "${result}" != "" ]; then
+    if [ "${result}" != "" ] && [ "${result}" != "${processed}" ]; then
         # Cut outer content, which has been processed already
         processed="<${processed#*<}"
     fi
