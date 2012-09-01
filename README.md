@@ -43,6 +43,39 @@ A simple call to the `source` function will enable you to do this:
 
 After that the `colorize` function is available and works as expected.
 
+## Available Color-Tags
+
+Currently all *16* default ANSI terminal colors are supported. Maybe support
+for the extended 256 colors modern terminals are capable of displaying will be
+added in the future.
+
+Currently the following tags are supported:
+
+<table>
+    <tr>
+        <th>Color Tag</th><th>Generated ANSI Code</th>
+    </tr>
+    <tr>
+        <td>&lt;red&gt…&lt;/red&gt;</td><td>\033[0;31m</td>
+        <td>&lt;green&gt…&lt;/green&gt;</td><td>\033[0;32m</td>
+        <td>&lt;yellow&gt…&lt;/yellow&gt;</td><td>\033[0;33m</td>
+        <td>&lt;blue&gt…&lt;/blue&gt;</td><td>\033[0;34m</td>
+        <td>&lt;purple&gt…&lt;/purple&gt;</td><td>\033[0;35m</td>
+        <td>&lt;cyan&gt…&lt;/cyan&gt;</td><td>\033[0;36m</td>
+        <td>&lt;light-red&gt…&lt;/light-red&gt;</td><td>\033[1;31m</td>
+        <td>&lt;light-green&gt…&lt;/light-green&gt;</td><td>\033[1;32m</td>
+        <td>&lt;light-yellow&gt…&lt;/light-yellow&gt;</td><td>\033[1;33m</td>
+        <td>&lt;light-blue&gt…&lt;/light-blue&gt;</td><td>\033[1;34m</td>
+        <td>&lt;light-purple&gt…&lt;/light-purple&gt;</td><td>\033[1;35m</td>
+        <td>&lt;light-cyan&gt…&lt;/light-cyan&gt;</td><td>\033[1;36m</td>
+        <td>&lt;gray&gt…&lt;/gray&gt;</td><td>\033[1;30m</td>
+        <td>&lt;light-gray&gt…&lt;/light-gray&gt;</td><td>\033[0;37m</td>
+        <td>&lt;white&gt…&lt;/white&gt;</td><td>\033[1;37m</td>
+        <td>&lt;black&gt…&lt;/black&gt;</td><td>\033[0;30m</td>
+        <td>&lt;none&gt…&lt;/none&gt;</td><td>\033[0m</td>
+    </tr>
+</table>
+
 ## Limitations
 
 Currently this library has only been tested with the
@@ -55,6 +88,11 @@ do all the XML-tag extraction and parsing using only shell builtins to provide
 a fast and nice user experience. Therefore making the library compatible with
 less powerful shells like for example *ash* from the [busybox](http://busybox.net) 
 project may be a difficult task.
+
+Background color setting is currently not supported as well. I simply don't
+have a real demand for that in most of my scripts. If you want this feature
+just drop me a line, maybe with an example how the syntax for this could look.
+I will see what I can do then. :)
 
 ## How you can help
 
