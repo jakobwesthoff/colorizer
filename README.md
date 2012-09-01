@@ -56,55 +56,55 @@ Currently the following tags are supported:
         <th>Color Tag</th><th>Generated ANSI Code</th>
     </tr>
     <tr>
-        <td>&lt;red&gt;…&lt;/red&gt;</td><td>\033[0;31m</td>
+        <td>&lt;<b>red</b>&ggt;…&lt;/red&gt;</td><td>\033[0;31m</td>
     </tr>
     <tr>
-        <td>&lt;green&gt;…&lt;/green&gt;</td><td>\033[0;32m</td>
+        <td>&lt;<b>green</b>&ggt;…&lt;/green&gt;</td><td>\033[0;32m</td>
     </tr>
     <tr>
-        <td>&lt;yellow&gt;…&lt;/yellow&gt;</td><td>\033[0;33m</td>
+        <td>&lt;<b>yellow</b>&ggt;…&lt;/yellow&gt;</td><td>\033[0;33m</td>
     </tr>
     <tr>
-        <td>&lt;blue&gt;…&lt;/blue&gt;</td><td>\033[0;34m</td>
+        <td>&lt;<b>blue</b>&ggt;…&lt;/blue&gt;</td><td>\033[0;34m</td>
     </tr>
     <tr>
-        <td>&lt;purple&gt;…&lt;/purple&gt;</td><td>\033[0;35m</td>
+        <td>&lt;<b>purple</b>&ggt;…&lt;/purple&gt;</td><td>\033[0;35m</td>
     </tr>
     <tr>
-        <td>&lt;cyan&gt;…&lt;/cyan&gt;</td><td>\033[0;36m</td>
+        <td>&lt;<b>cyan</b>&ggt;…&lt;/cyan&gt;</td><td>\033[0;36m</td>
     </tr>
     <tr>
-        <td>&lt;light-red&gt;…&lt;/light-red&gt;</td><td>\033[1;31m</td>
+        <td>&lt;<b>light-red</b>&ggt;…&lt;/light-red&gt;</td><td>\033[1;31m</td>
     </tr>
     <tr>
-        <td>&lt;light-green&gt;…&lt;/light-green&gt;</td><td>\033[1;32m</td>
+        <td>&lt;<b>light-green</b>&ggt;…&lt;/light-green&gt;</td><td>\033[1;32m</td>
     </tr>
     <tr>
-        <td>&lt;light-yellow&gt;…&lt;/light-yellow&gt;</td><td>\033[1;33m</td>
+        <td>&lt;<b>light-yellow</b>&ggt;…&lt;/light-yellow&gt;</td><td>\033[1;33m</td>
     </tr>
     <tr>
-        <td>&lt;light-blue&gt;…&lt;/light-blue&gt;</td><td>\033[1;34m</td>
+        <td>&lt;<b>light-blue</b>&ggt;…&lt;/light-blue&gt;</td><td>\033[1;34m</td>
     </tr>
     <tr>
-        <td>&lt;light-purple&gt;…&lt;/light-purple&gt;</td><td>\033[1;35m</td>
+        <td>&lt;<b>light-purple</b>&ggt;…&lt;/light-purple&gt;</td><td>\033[1;35m</td>
     </tr>
     <tr>
-        <td>&lt;light-cyan&gt;…&lt;/light-cyan&gt;</td><td>\033[1;36m</td>
+        <td>&lt;<b>light-cyan</b>&ggt;…&lt;/light-cyan&gt;</td><td>\033[1;36m</td>
     </tr>
     <tr>
-        <td>&lt;gray&gt;…&lt;/gray&gt;</td><td>\033[1;30m</td>
+        <td>&lt;<b>gray</b>&ggt;…&lt;/gray&gt;</td><td>\033[1;30m</td>
     </tr>
     <tr>
-        <td>&lt;light-gray&gt;…&lt;/light-gray&gt;</td><td>\033[0;37m</td>
+        <td>&lt;<b>light-gray</b>&ggt;…&lt;/light-gray&gt;</td><td>\033[0;37m</td>
     </tr>
     <tr>
-        <td>&lt;white&gt;…&lt;/white&gt;</td><td>\033[1;37m</td>
+        <td>&lt;<b>white</b>&ggt;…&lt;/white&gt;</td><td>\033[1;37m</td>
     </tr>
     <tr>
-        <td>&lt;black&gt;…&lt;/black&gt;</td><td>\033[0;30m</td>
+        <td>&lt;<b>black</b>&ggt;…&lt;/black&gt;</td><td>\033[0;30m</td>
     </tr>
     <tr>
-        <td>&lt;none&gt;…&lt;/none&gt;</td><td>\033[0m</td>
+        <td>&lt;<b>none</b>&ggt;…&lt;/none&gt;</td><td>\033[0m</td>
     </tr>
     <tr>
 </table>
