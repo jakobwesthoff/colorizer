@@ -121,6 +121,11 @@ COLORIZER_process_input() {
         result="${result}${processed%%<*}"
     done
 
+    if [ "${#stack[@]}" -ne 0 ]; then
+        echo "Could not find closing tag for <${stack[${#stack[@]}-1]}>"
+        exit 42
+    fi
+
     result="${result//&lt;/<}"
     result="${result//&gt;/>}"
     echo "${result}"
