@@ -1,6 +1,6 @@
 # Colorizer - A bash library for XML-like ansi coloring
 
-*Colorizer* allows the easy usage of ANSI color coded output in bash scripts
+**Colorizer** allows the easy usage of ANSI color coded output in bash scripts
 using an XML-like syntax
 
 ## Usage and Examples
@@ -10,7 +10,7 @@ XML-like color definition
 
     colorize "Hey <red>attention</red>! the before seen is <light-red>red</light-red>"
 
-*Colorizer* automatically injects the ANSI colorcodes needed to output the
+**Colorizer** automatically injects the ANSI colorcodes needed to output the
 given string in the correct color.
 
 Nested tags are possible as well:
@@ -23,7 +23,7 @@ You need to escape them using their usual XML entity representation:
 
     colorize "<cyan>1</cyan> &lt; <purple>2</purple>"
 
-*Colorizer* used the `echo -e` command to output the formatted information.
+**Colorizer** used the `echo -e` command to output the formatted information.
 Therefore a newline is automatically echoed at the end of the string. If you do
 not want to output this newline just supply the `-n` option to `colorize`. In
 this case `echo -en` is used for output to suppress the newline:
@@ -32,7 +32,7 @@ this case `echo -en` is used for output to suppress the newline:
 
 Mismatched tags as well as missing start or end tags will be detected. In this
 case an error message indicating the problem will be echoed back as well as an
-exit with errorcode **42** will be issued.
+exit with errorcode *42* will be issued.
 
 ## Loading the Library
 
@@ -45,15 +45,16 @@ After that the `colorize` function is available and works as expected.
 
 ## Limitations
 
-Currently this library has only been tested with the [Bash](http://bash.org)
-shell in versions greater than 3.x. Maybe other modern shells will work as
-well, but I didn't have the time to test those yet.
+Currently this library has only been tested with the
+[Bash](http://www.gnu.org/software/bash/) shell in versions greater than 3.x.
+Maybe other modern shells will work as well, but I didn't have the time to test
+those yet.
 
-*Colorizer* uses a lot of quite sophisticated variable expansion features, to
+**Colorizer** uses a lot of quite sophisticated variable expansion features, to
 do all the XML-tag extraction and parsing using only shell builtins to provide
 a fast and nice user experience. Therefore making the library compatible with
-less powerful shells like for example **ash** from the [busybox]() project may
-be a difficult task.
+less powerful shells like for example *ash* from the [busybox](http://busybox.net) 
+project may be a difficult task.
 
 ## How you can help
 
