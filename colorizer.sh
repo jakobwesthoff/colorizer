@@ -1,0 +1,165 @@
+####
+# Copyright (c) 2012, Jakob Westhoff <jakob@qafoo.com>
+# 
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+#  - Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+#  - Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+####
+
+# Escape codes
+COLORIZER_START="\033["
+COLORIZER_END="m"
+
+# Default colors
+COLORIZER_blue="0;34"
+COLORIZER_green="0;32"
+COLORIZER_cyan="0;36"
+COLORIZER_red="0;31"
+COLORIZER_purple="0;35"
+COLORIZER_yellow="0;33"
+COLORIZER_gray="1;30"
+COLORIZER_light_blue="1;34"
+COLORIZER_light_green="1;32"
+COLORIZER_light_cyan="1;36"
+COLORIZER_light_red="1;31"
+COLORIZER_light_purple="1;35"
+COLORIZER_light_yellow="1;33"
+COLORIZER_light_gray="0;37"
+
+# Somewhat special colors
+COLORIZER_black="0;30"
+COLORIZER_white="1;37"
+COLORIZER_none="0"
+
+##
+# Add escape sequences to defined color codes
+#
+# Must never be called outside of this script, as it only is allowed to be
+# called once
+#
+# It's only a function to allow local variables
+##
+COLORIZER_add_escape_sequences() {
+    local color
+    for color in blue green cyan red purple yellow gray; do
+        eval "COLORIZER_${color}=\"\${COLORIZER_START}\${COLORIZER_${color}}\${COLORIZER_END}\""
+        eval "COLORIZER_light_${color}=\"\${COLORIZER_START}\${COLORIZER_light_${color}}\${COLORIZER_END}\""
+    done
+
+    for color in black white none; do
+        eval "COLORIZER_${color}=\"\${COLORIZER_START}\${COLORIZER_${color}}\${COLORIZER_END}\""
+    done
+}
+
+##
+# Parse the input and return the ansi code output processed output
+##
+COLORIZER_process_input() {
+    local processed="${*}"
+    local pseudoTag=""
+
+    local -a stack
+    local result=""
+
+    result="${processed%%<*}"
+    if [ "${result}" != "" ]; then
+        # Cut outer content, which has been processed already
+        processed="<${processed#*<}"
+    fi
+    while [ "${processed#*<}" != "${processed}" ]; do
+        # Isolate first tag in stream
+        pseudoTag="${processed#*<}"
+        pseudoTag="${pseudoTag%%>*}"
+
+        # Push/Pop tag to/from stack
+        if [ "${pseudoTag:0:1}" != "/" ]; then
+            stack[${#stack[@]}]="${pseudoTag}"
+        else
+            if [ "${pseudoTag:1}" != "${stack[${#stack[@]}-1]}" ]; then
+                echo "Mismatching colorize tag nesting at <${stack[${#stack[@]}-1]}>...<${pseudoTag}>"
+                exit 42
+            fi
+            unset stack[${#stack[@]}-1]
+        fi
+
+        # Apply ansi formatting
+        pseudoTag="${pseudoTag/-/_}"
+        if [ "${pseudoTag:0:1}" != "/" ]; then
+            # Opening Tag
+            eval "result=\"\${result}\${COLORIZER_${pseudoTag}}\""
+        else
+            # Closing Tag
+            if [ "${#stack[@]}" -eq 0 ]; then
+                result="${result}${COLORIZER_none}"
+            else
+                eval "result=\"\${result}\${COLORIZER_${stack[${#stack[@]}-1]}}\""
+            fi
+        fi
+
+        # Cut processed portion from stream
+        processed="${processed#*>}"
+        
+        # Update result with next content part
+        result="${result}${processed%%<*}"
+    done
+
+    result="${result//&lt;/<}"
+    result="${result//&gt;/>}"
+    echo "${result}"
+}
+
+##
+# Parse a given colorize string and output the correctly escaped ansi-code
+# formatted string for it.
+#
+# This function is the only public API method to this utillity
+#
+# echo -e is used for output.
+#
+# The -n option may be specified, which will behave exactly like echo -n, aka
+# ommiting the newline.
+#
+# @option -n ommit the newline
+# @param [string,...]
+##
+colorize() {
+    OPTIND=0
+    local newline_option=""
+    local option=""
+    while getopts ":n" option; do
+        case "${option}" in
+            n) newline_option="SET";;
+            \?) echo "Invalid option (-${OPTARG}) given to colorize"; exit 42;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    local processed_message="$(COLORIZER_process_input "${@}")"
+
+    if [ "${newline_option}" == "SET" ]; then
+        echo -en "${processed_message}"
+    else
+        echo -e "${processed_message}"
+    fi
+}
+
+# Initialize the color codes
+COLORIZER_add_escape_sequences
