@@ -166,5 +166,8 @@ colorize() {
     fi
 }
 
+# Allow alternate spelling
+alias colourise=colorize
+
 # Initialize the color codes
 COLORIZER_add_escape_sequences
