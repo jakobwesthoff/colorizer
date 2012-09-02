@@ -163,7 +163,7 @@ colorize() {
 
     local processed_message="$(COLORIZER_process_input "${@}")"
 
-    if [ "${newline_option}" == "SET" ]; then
+    if [ "${newline_option}" = "SET" ]; then
         echo -en "${processed_message}"
     else
         echo -e "${processed_message}"
