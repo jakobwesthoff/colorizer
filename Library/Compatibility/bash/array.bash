@@ -128,3 +128,15 @@ ARRAY_pop() {
     echo "$(ARRAY_peek "${name}")"
     eval "unset \"${name}[\${#${name}[@]}-1]\""
 }
+
+##
+# Unset a certain index from the given array
+#
+# @param name
+##
+ARRAY_unset() {
+    local name="${1}"
+    local index="${2}"
+
+    eval "unset ${name}[${index}]"
+}
