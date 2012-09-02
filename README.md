@@ -39,7 +39,7 @@ exit with errorcode *42* will be issued.
 Before you can use the library you need to load it into your bash script.
 A simple call to the `source` function will enable you to do this:
 
-    source "folder/to/Colorizer/lib/colorizer.sh"
+    source "folder/to/Colorizer/Library/colorizer.sh"
 
 After that the `colorize` function is available and works as expected.
 
