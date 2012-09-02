@@ -24,6 +24,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ####
 
+source "$( cd "$( dirname "${BASH_SOURCE:-${0}}" )" && pwd )/Compatibility/compatibility.sh"
+
 # Escape codes
 COLORIZER_START="\033["
 COLORIZER_END="m"
@@ -76,7 +78,9 @@ COLORIZER_process_input() {
     local processed="${*}"
     local pseudoTag=""
 
-    local -a stack
+    local stack
+    ARRAY_define "stack"
+
     local result=""
 
     result="${processed%%<*}"
@@ -91,13 +95,13 @@ COLORIZER_process_input() {
 
         # Push/Pop tag to/from stack
         if [ "${pseudoTag:0:1}" != "/" ]; then
-            stack[${#stack[@]}]="${pseudoTag}"
+            ARRAY_push "stack" "${pseudoTag}"
         else
-            if [ "${pseudoTag:1}" != "${stack[${#stack[@]}-1]}" ]; then
-                echo "Mismatching colorize tag nesting at <${stack[${#stack[@]}-1]}>...<${pseudoTag}>"
+            if [ "${pseudoTag:1}" != "$(ARRAY_peek "stack")" ]; then
+                echo "Mismatching colorize tag nesting at <$(ARRAY_peek "stack")>...<${pseudoTag}>"
                 exit 42
             fi
-            unset stack[${#stack[@]}-1]
+            ARRAY_pop "stack" >/dev/null
         fi
 
         # Apply ansi formatting
@@ -107,10 +111,10 @@ COLORIZER_process_input() {
             eval "result=\"\${result}\${COLORIZER_${pseudoTag}}\""
         else
             # Closing Tag
-            if [ "${#stack[@]}" -eq 0 ]; then
+            if [ "$(ARRAY_count "stack")" -eq 0 ]; then
                 result="${result}${COLORIZER_none}"
             else
-                eval "result=\"\${result}\${COLORIZER_${stack[${#stack[@]}-1]}}\""
+                eval "result=\"\${result}\${COLORIZER_$(ARRAY_peek "stack")}\""
             fi
         fi
 
@@ -121,8 +125,8 @@ COLORIZER_process_input() {
         result="${result}${processed%%<*}"
     done
 
-    if [ "${#stack[@]}" -ne 0 ]; then
-        echo "Could not find closing tag for <${stack[${#stack[@]}-1]}>"
+    if [ "$(ARRAY_count "stack")" -ne 0 ]; then
+        echo "Could not find closing tag for <$(ARRAY_peek "stack")>"
         exit 42
     fi
 
