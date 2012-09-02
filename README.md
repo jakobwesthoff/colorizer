@@ -34,6 +34,12 @@ Mismatched tags as well as missing start or end tags will be detected. In this
 case an error message indicating the problem will be echoed back as well as an
 exit with errorcode *42* will be issued.
 
+### Aliases
+
+As *colorize* and *colourise* is differently spelled in american and british
+english an alias is defined for the `colorize` function. Therefore you may
+substitute it with the `colourise` command without thinking about it.
+
 ## Loading the Library
 
 Before you can use the library you need to load it into your bash script.
