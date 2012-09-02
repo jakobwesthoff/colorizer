@@ -50,7 +50,7 @@ ARRAY_define() {
 ARRAY_count() {
     local name="${1}"
 
-    if [ -z "$(eval "echo \"\${${name}}\"")" ]; then
+    if [ -z "$(set +u; eval "echo \"\${${name}}\"")" ]; then
         echo "0"
     else
         eval "echo \"\${#${name}[@]}\""
