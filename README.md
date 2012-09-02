@@ -1,6 +1,6 @@
 # Colorizer - A bash library for XML-like ansi coloring
 
-**Colorizer** allows the easy usage of ANSI color coded output in bash scripts
+**Colorizer** allows the easy usage of ANSI color coded output in shell scripts
 using an XML-like syntax
 
 ## Usage and Examples
@@ -118,26 +118,28 @@ Currently the following tags are supported:
 ## Limitations
 
 Currently this library has only been tested with the
-[Bash](http://www.gnu.org/software/bash/) shell in versions greater than 3.x.
-Maybe other modern shells will work as well, but I didn't have the time to test
-those yet.
+[Bash](http://www.gnu.org/software/bash/) (>3.x) and ZSH shell (>5.x). Maybe
+other modern shells will work as well, but I didn't have the time to test those
+yet.
 
 **Colorizer** uses a lot of quite sophisticated variable expansion features, to
 do all the XML-tag extraction and parsing using only shell builtins to provide
-a fast and nice user experience. Therefore making the library compatible with
-less powerful shells like for example *ash* from the [busybox](http://busybox.net) 
-project may be a difficult task.
+a fast and nice user experience. Therefore making the library compatible
+with less powerful shells like for example *ash* from the
+[busybox](http://busybox.net) project may be a difficult task. However
+a compatibility layer exists, which may allow implementation of complex
+tasks for different shells.
 
-Background color setting is currently not supported as well. I simply don't
-have a real demand for that in most of my scripts. If you want this feature
-just drop me a line, maybe with an example how the syntax for this could look.
-I will see what I can do then. :)
+Background color setting is currently not supported. I simply don't have real
+demand for that in most of my scripts. If you want this feature just drop me
+a line, maybe with an example how the syntax for this could look. I will see
+what I can do then. :)
 
 ## How you can help
 
-If you have got some time and are using another shell than bash, I would love
-some feedback about the compatibility of this library with your shell.
+If you have got some time and are using currently untested shells, I would love
+some feedback about the compatibility of this library with your environment.
 
-If you are interested in porting this library over to another shell, any pull
-request with compatibility updates as well as error output and information
-about your shell will be great.
+If you are interested in porting this library over to another shell
+environment, any pull request with compatibility updates will be great. Error
+output and information about your shell may help me as well.
