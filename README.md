@@ -118,9 +118,9 @@ Currently the following tags are supported:
 ## Limitations
 
 Currently this library has only been tested with the
-[Bash](http://www.gnu.org/software/bash/) (>3.x) and ZSH shell (>5.x). Maybe
-other modern shells will work as well, but I didn't have the time to test those
-yet.
+[Bash](http://www.gnu.org/software/bash/) (>3.x) and
+[ZSH](http://zsh.sourceforge.net/) shell (>5.x). Maybe other modern shells will
+work as well, but I didn't have the time to test those yet.
 
 **Colorizer** uses a lot of quite sophisticated variable expansion features, to
 do all the XML-tag extraction and parsing using only shell builtins to provide
