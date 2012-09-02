@@ -140,9 +140,9 @@ COLORIZER_process_input() {
 # echo -e is used for output.
 #
 # The -n option may be specified, which will behave exactly like echo -n, aka
-# ommiting the newline.
+# omitting the newline.
 #
-# @option -n ommit the newline
+# @option -n omit the newline
 # @param [string,...]
 ##
 colorize() {
