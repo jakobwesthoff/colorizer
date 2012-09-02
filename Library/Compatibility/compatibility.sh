@@ -31,6 +31,8 @@
 
 if [ -n "${BASH_VERSION}" ]; then
     source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/bash/"*.bash
+elif [ -n "${ZSH_VERSION}" ]; then
+    source "$( cd "$( dirname "${0}" )" && pwd )/zsh/"*.zsh
 else
     echo "No compatibility layer implementation could be found for your current shell. Sorry."
     exit 42
