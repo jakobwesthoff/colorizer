@@ -122,17 +122,16 @@ Currently the following tags are supported:
 ## Limitations
 
 Currently this library has only been tested with the
-[Bash](http://www.gnu.org/software/bash/) (>3.x) and
-[ZSH](http://zsh.sourceforge.net/) shell (>5.x). Maybe other modern shells will
-work as well, but I didn't have the time to test those yet.
+[Bash](http://www.gnu.org/software/bash/) (>3.x),
+[ZSH](http://zsh.sourceforge.net/) shell (>5.x) and
+[busybox](http://www.busybox.net/) ash. The code should run in every POSIX
+compatible shell as well, but I didn't have the time to test those yet.
 
 **Colorizer** uses a lot of quite sophisticated variable expansion features, to
 do all the XML-tag extraction and parsing using only shell builtins to provide
 a fast and nice user experience. Therefore making the library compatible
-with less powerful shells like for example *ash* from the
-[busybox](http://busybox.net) project may be a difficult task. However
-a compatibility layer exists, which may allow implementation of complex
-tasks for different shells.
+with less powerful shells may be a difficult task. However a compatibility
+layer exists, which may allow implementation of complex tasks for different shells.
 
 Background color setting is currently not supported. I simply don't have real
 demand for that in most of my scripts. If you want this feature just drop me
