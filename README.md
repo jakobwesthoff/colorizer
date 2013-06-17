@@ -49,6 +49,10 @@ A simple call to the `source` function will enable you to do this:
 
 After that the `colorize` function is available and works as expected.
 
+If your shell does neither set `$BASH_SOURCE` nor `$0` in the sourced file, you
+have to manually define the variable `COLORIZE_SH_SOURCE_DIR` to the directory
+containing the `colorize.sh` file.
+
 ## Available Color-Tags
 
 Currently all *16* default ANSI terminal colors are supported. Maybe support
