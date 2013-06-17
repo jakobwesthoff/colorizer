@@ -24,7 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ####
 
-source "$( cd "$( dirname "${BASH_SOURCE:-${0}}" )" && pwd )/Compatibility/compatibility.sh"
+source "${COLORIZE_SH_SOURCE_DIR:-$( cd "$( dirname "${BASH_SOURCE:-${0}}" )" && pwd )}/Compatibility/compatibility.sh"
 
 # Escape codes
 COLORIZER_START="\033["
@@ -150,7 +150,7 @@ COLORIZER_process_input() {
 # @param [string,...]
 ##
 colorize() {
-    OPTIND=0
+    local OPTIND=1
     local newline_option=""
     local option=""
     while getopts ":n" option; do
