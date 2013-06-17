@@ -150,7 +150,7 @@ COLORIZER_process_input() {
 # @param [string,...]
 ##
 colorize() {
-    OPTIND=0
+    local OPTIND=1
     local newline_option=""
     local option=""
     while getopts ":n" option; do
