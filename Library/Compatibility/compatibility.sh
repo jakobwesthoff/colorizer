@@ -30,7 +30,7 @@
 ####
 
 if [ -n "${BASH_VERSION}" ]; then
-    source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/bash/"*.bash
+    source "$( cd "$( dirname "${BASH_SOURCE}" )" && pwd )/bash/"*.bash
 elif [ -n "${ZSH_VERSION}" ]; then
     source "$( cd "$( dirname "${0}" )" && pwd )/zsh/"*.zsh
 else
