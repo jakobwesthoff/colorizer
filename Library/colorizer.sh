@@ -29,6 +29,8 @@ source "${COLORIZE_SH_SOURCE_DIR:-$( cd "$( dirname "${BASH_SOURCE:-${0}}" )" &&
 # Escape codes
 COLORIZER_START=${COLORIZER_START:="\033["}
 COLORIZER_END=${COLORIZER_END:="m"}
+COLORIZER_ESC_START=${COLORIZER_ESC_START:="\["}
+COLORIZER_ESC_END=${COLORIZER_ESC_END:="\]"}
 
 # Default colors
 COLORIZER_blue=${COLORIZER_blue:="0;34"}
@@ -119,8 +121,6 @@ COLORIZER_process_input() {
 # Parse a given colorize string and output the correctly escaped ansi-code
 # formatted string for it.
 #
-# This function is the only public API method to this utillity
-#
 # echo -e is used for output.
 #
 # The -n option may be specified, which will behave exactly like echo -n, aka
@@ -150,5 +150,23 @@ colorize() {
     fi
 }
 
+##
+# Wrapper around colorize using extra COLORIZE_ESC_* values.
+# This is useful for colored prompts. Properly escaping ansi in prompts
+# prevents eratic bugs in the line feed.
+#
+# This simply overwrites globals, runs colorize, then resets them back.
+##
+colorize_esc() {
+    local start=$COLORIZER_START
+    local end=$COLORIZER_END
+    COLORIZER_START=$COLORIZER_ESC_START$start
+    COLORIZER_END=$end$COLORIZER_ESC_END
+    colorize ${@}
+    COLORIZER_START=$start
+    COLORIZER_END=$end
+}
+
 # Allow alternate spelling
 alias colourise=colorize
+alias colourise_esc=colorize_esc
