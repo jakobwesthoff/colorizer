@@ -27,29 +27,26 @@
 source "${COLORIZE_SH_SOURCE_DIR:-$( cd "$( dirname "${BASH_SOURCE:-${0}}" )" && pwd )}/Compatibility/compatibility.sh"
 
 # Escape codes
-COLORIZER_START="\033["
-COLORIZER_END="m"
+COLORIZER_START=${COLORIZER_START:="\033["}
+COLORIZER_END=${COLORIZER_END:="m"}
 
 # Default colors
-COLORIZER_blue="0;34"
-COLORIZER_green="0;32"
-COLORIZER_cyan="0;36"
-COLORIZER_red="0;31"
-COLORIZER_purple="0;35"
-COLORIZER_yellow="0;33"
-COLORIZER_gray="1;30"
-COLORIZER_light_blue="1;34"
-COLORIZER_light_green="1;32"
-COLORIZER_light_cyan="1;36"
-COLORIZER_light_red="1;31"
-COLORIZER_light_purple="1;35"
-COLORIZER_light_yellow="1;33"
-COLORIZER_light_gray="0;37"
+COLORIZER_blue=${COLORIZER_blue:="0;34"}
+COLORIZER_green=${COLORIZER_green:="0;32"}
+COLORIZER_cyan=${COLORIZER_cyan:="0;36"}
+COLORIZER_red=${COLORIZER_red:="0;31"}
+COLORIZER_purple=${COLORIZER_purple:="0;35"}
+COLORIZER_yellow=${COLORIZER_yellow:="0;33"}
+COLORIZER_gray=${COLORIZER_gray:="1;30"}
+COLORIZER_light_blue=${COLORIZER_light_blue:="1;34"}
+COLORIZER_light_green=${COLORIZER_light_green:="1;32"}
+COLORIZER_light_cyan=${COLORIZER_light_cyan:="1;36"}
+COLORIZER_light_red=${COLORIZER_light_red:="1;31"}
+COLORIZER_light_purple=${COLORIZER_light_purple:="1;35"}
+COLORIZER_light_yellow=${COLORIZER_light_yellow:="1;33"}
+COLORIZER_light_gray=${COLORIZER_light_gray:="0;37"}
 
 # Somewhat special colors
-COLORIZER_black="0;30"
-COLORIZER_white="1;37"
-COLORIZER_none="0"
 
 ##
 # Add escape sequences to defined color codes
@@ -70,6 +67,9 @@ COLORIZER_add_escape_sequences() {
         eval "COLORIZER_${color}=\"\${COLORIZER_START}\${COLORIZER_${color}}\${COLORIZER_END}\""
     done
 }
+COLORIZER_black=${COLORIZER_black:="0;30"}
+COLORIZER_white=${COLORIZER_white:="1;37"}
+COLORIZER_none=${COLORIZER_none:="0"}
 
 ##
 # Parse the input and return the ansi code output processed output
