@@ -47,26 +47,6 @@ COLORIZER_light_yellow=${COLORIZER_light_yellow:="1;33"}
 COLORIZER_light_gray=${COLORIZER_light_gray:="0;37"}
 
 # Somewhat special colors
-
-##
-# Add escape sequences to defined color codes
-#
-# Must never be called outside of this script, as it only is allowed to be
-# called once
-#
-# It's only a function to allow local variables
-##
-COLORIZER_add_escape_sequences() {
-    local color
-    for color in blue green cyan red purple yellow gray; do
-        eval "COLORIZER_${color}=\"\${COLORIZER_START}\${COLORIZER_${color}}\${COLORIZER_END}\""
-        eval "COLORIZER_light_${color}=\"\${COLORIZER_START}\${COLORIZER_light_${color}}\${COLORIZER_END}\""
-    done
-
-    for color in black white none; do
-        eval "COLORIZER_${color}=\"\${COLORIZER_START}\${COLORIZER_${color}}\${COLORIZER_END}\""
-    done
-}
 COLORIZER_black=${COLORIZER_black:="0;30"}
 COLORIZER_white=${COLORIZER_white:="1;37"}
 COLORIZER_none=${COLORIZER_none:="0"}
@@ -108,19 +88,19 @@ COLORIZER_process_input() {
         pseudoTag="${pseudoTag/-/_}"
         if [ "${pseudoTag:0:1}" != "/" ]; then
             # Opening Tag
-            eval "result=\"\${result}\${COLORIZER_${pseudoTag}}\""
+            eval "result=\"\${result}\${COLORIZER_START}\${COLORIZER_${pseudoTag}}\${COLORIZER_END}\""
         else
             # Closing Tag
             if [ "$(ARRAY_count "stack")" -eq 0 ]; then
-                result="${result}${COLORIZER_none}"
+                result="${result}${COLORIZER_START}${COLORIZER_none}${COLORIZER_END}"
             else
-                eval "result=\"\${result}\${COLORIZER_$(ARRAY_peek "stack")}\""
+                eval "result=\"\${result}\${COLORIZER_START}\${COLORIZER_$(ARRAY_peek "stack")}\${COLORIZER_END}\""
             fi
         fi
 
         # Cut processed portion from stream
         processed="${processed#*>}"
-        
+
         # Update result with next content part
         result="${result}${processed%%<*}"
     done
@@ -172,6 +152,3 @@ colorize() {
 
 # Allow alternate spelling
 alias colourise=colorize
-
-# Initialize the color codes
-COLORIZER_add_escape_sequences
