@@ -57,6 +57,8 @@ COLORIZER_none=${COLORIZER_none:="0"}
 COLORIZER_process_input() {
     local prompt_option="${1}"
     shift
+    local strip_option="${1}"
+    shift
     local processed="${*}"
     local pseudoTag=""
 
@@ -88,25 +90,28 @@ COLORIZER_process_input() {
         fi
 
         # Apply ansi formatting
-        pseudoTag="${pseudoTag/-/_}"
-        if [ "${pseudoTag:0:1}" != "/" ]; then
-            # Opening Tag
-            eval "ansiToken=\"\${COLORIZER_${pseudoTag}}\""
-        else
-            # Closing Tag
-            if [ "$(ARRAY_count "stack")" -eq 0 ]; then
-                ansiToken="${COLORIZER_none}"
+        if [ -z "${strip_option}" ]; then
+            pseudoTag="${pseudoTag/-/_}"
+            if [ "${pseudoTag:0:1}" != "/" ]; then
+                # Opening Tag
+                eval "ansiToken=\"\${COLORIZER_${pseudoTag}}\""
             else
-                eval "ansiToken=\"\${COLORIZER_$(ARRAY_peek "stack")}\""
+                # Closing Tag
+                if [ "$(ARRAY_count "stack")" -eq 0 ]; then
+                    ansiToken="${COLORIZER_none}"
+                else
+                    eval "ansiToken=\"\${COLORIZER_$(ARRAY_peek "stack")}\""
+                fi
             fi
-        fi
 
-        # Add escape codes
-        ansiToken="${COLORIZER_START}${ansiToken}${COLORIZER_END}"
-        if [ "${prompt_option}" = "SET" ]; then
-            ansiToken="\[${ansiToken}\]"
+            # Add escape codes
+            ansiToken="${COLORIZER_START}${ansiToken}${COLORIZER_END}"
+            if [ "${prompt_option}" = "SET" ]; then
+                ansiToken="\[${ansiToken}\]"
+            fi
+
+            result="${result}${ansiToken}"
         fi
-        result="${result}${ansiToken}"
 
         # Cut processed portion from stream
         processed="${processed#*>}"
@@ -140,23 +145,26 @@ COLORIZER_process_input() {
 #
 # @option -n omit the newline
 # @option -p escape ansi for prompt usage
+# @option -s instead of replacing with ansi, just strip the tags
 # @param [string,...]
 ##
 colorize() {
     local OPTIND=1
     local newline_option=""
     local prompt_option=""
+    local strip_option=""
     local option=""
-    while getopts ":np" option; do
+    while getopts ":nps" option; do
         case "${option}" in
             n) newline_option="SET";;
             p) prompt_option="SET";;
+            s) strip_option="SET";;
             \?) echo "Invalid option (-${OPTARG}) given to colorize"; exit 42;;
         esac
     done
     shift $((OPTIND-1))
 
-    local processed_message="$(COLORIZER_process_input "${prompt_option}" "${@}")"
+    local processed_message="$(COLORIZER_process_input "${prompt_option}" "${strip_option}" "${@}")"
 
     if [ "${newline_option}" = "SET" ]; then
         echo -en "${processed_message}"
