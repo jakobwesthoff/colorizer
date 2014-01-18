@@ -56,9 +56,8 @@ COLORIZER_none=${COLORIZER_none:="0"}
 ##
 COLORIZER_process_input() {
     local prompt_option="${1}"
-    shift
-    local strip_option="${1}"
-    shift
+    local strip_option="${2}"
+    shift 2
     local processed="${*}"
     local pseudoTag=""
 
