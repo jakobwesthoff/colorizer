@@ -29,8 +29,6 @@ source "${COLORIZE_SH_SOURCE_DIR:-$( cd "$( dirname "${BASH_SOURCE:-${0}}" )" &&
 # Escape codes
 COLORIZER_START=${COLORIZER_START:="\033["}
 COLORIZER_END=${COLORIZER_END:="m"}
-COLORIZER_ESC_START=${COLORIZER_ESC_START:="\["}
-COLORIZER_ESC_END=${COLORIZER_ESC_END:="\]"}
 
 # Default colors
 COLORIZER_blue=${COLORIZER_blue:="0;34"}
@@ -57,6 +55,8 @@ COLORIZER_none=${COLORIZER_none:="0"}
 # Parse the input and return the ansi code output processed output
 ##
 COLORIZER_process_input() {
+    local prompt_option="${1}"
+    shift
     local processed="${*}"
     local pseudoTag=""
 
@@ -64,6 +64,7 @@ COLORIZER_process_input() {
     ARRAY_define "stack"
 
     local result=""
+    local ansiToken=""
 
     result="${processed%%<*}"
     if [ "${result}" != "" ] && [ "${result}" != "${processed}" ]; then
@@ -90,15 +91,22 @@ COLORIZER_process_input() {
         pseudoTag="${pseudoTag/-/_}"
         if [ "${pseudoTag:0:1}" != "/" ]; then
             # Opening Tag
-            eval "result=\"\${result}\${COLORIZER_START}\${COLORIZER_${pseudoTag}}\${COLORIZER_END}\""
+            eval "ansiToken=\"\${COLORIZER_${pseudoTag}}\""
         else
             # Closing Tag
             if [ "$(ARRAY_count "stack")" -eq 0 ]; then
-                result="${result}${COLORIZER_START}${COLORIZER_none}${COLORIZER_END}"
+                ansiToken="${COLORIZER_none}"
             else
-                eval "result=\"\${result}\${COLORIZER_START}\${COLORIZER_$(ARRAY_peek "stack")}\${COLORIZER_END}\""
+                eval "ansiToken=\"\${COLORIZER_$(ARRAY_peek "stack")}\""
             fi
         fi
+
+        # Add escape codes
+        ansiToken="${COLORIZER_START}${ansiToken}${COLORIZER_END}"
+        if [ "${prompt_option}" = "SET" ]; then
+            ansiToken="\[${ansiToken}\]"
+        fi
+        result="${result}${ansiToken}"
 
         # Cut processed portion from stream
         processed="${processed#*>}"
@@ -121,27 +129,34 @@ COLORIZER_process_input() {
 # Parse a given colorize string and output the correctly escaped ansi-code
 # formatted string for it.
 #
+# This function is the only public API method to this utillity
+#
 # echo -e is used for output.
 #
 # The -n option may be specified, which will behave exactly like echo -n, aka
 # omitting the newline.
 #
+# To use ansi in a prompt without behaving badly, using the -p option.
+#
 # @option -n omit the newline
+# @option -p escape ansi for prompt usage
 # @param [string,...]
 ##
 colorize() {
     local OPTIND=1
     local newline_option=""
+    local prompt_option=""
     local option=""
-    while getopts ":n" option; do
+    while getopts ":np" option; do
         case "${option}" in
             n) newline_option="SET";;
+            p) prompt_option="SET";;
             \?) echo "Invalid option (-${OPTARG}) given to colorize"; exit 42;;
         esac
     done
     shift $((OPTIND-1))
 
-    local processed_message="$(COLORIZER_process_input "${@}")"
+    local processed_message="$(COLORIZER_process_input "${prompt_option}" "${@}")"
 
     if [ "${newline_option}" = "SET" ]; then
         echo -en "${processed_message}"
@@ -150,23 +165,5 @@ colorize() {
     fi
 }
 
-##
-# Wrapper around colorize using extra COLORIZE_ESC_* values.
-# This is useful for colored prompts. Properly escaping ansi in prompts
-# prevents eratic bugs in the line feed.
-#
-# This simply overwrites globals, runs colorize, then resets them back.
-##
-colorize_esc() {
-    local start=$COLORIZER_START
-    local end=$COLORIZER_END
-    COLORIZER_START=$COLORIZER_ESC_START$start
-    COLORIZER_END=$end$COLORIZER_ESC_END
-    colorize ${@}
-    COLORIZER_START=$start
-    COLORIZER_END=$end
-}
-
 # Allow alternate spelling
 alias colourise=colorize
-alias colourise_esc=colorize_esc
