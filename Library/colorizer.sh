@@ -27,54 +27,37 @@
 source "${COLORIZE_SH_SOURCE_DIR:-$( cd "$( dirname "${BASH_SOURCE:-${0}}" )" && pwd )}/Compatibility/compatibility.sh"
 
 # Escape codes
-COLORIZER_START="\033["
-COLORIZER_END="m"
+COLORIZER_START=${COLORIZER_START:="\033["}
+COLORIZER_END=${COLORIZER_END:="m"}
 
 # Default colors
-COLORIZER_blue="0;34"
-COLORIZER_green="0;32"
-COLORIZER_cyan="0;36"
-COLORIZER_red="0;31"
-COLORIZER_purple="0;35"
-COLORIZER_yellow="0;33"
-COLORIZER_gray="1;30"
-COLORIZER_light_blue="1;34"
-COLORIZER_light_green="1;32"
-COLORIZER_light_cyan="1;36"
-COLORIZER_light_red="1;31"
-COLORIZER_light_purple="1;35"
-COLORIZER_light_yellow="1;33"
-COLORIZER_light_gray="0;37"
+COLORIZER_blue=${COLORIZER_blue:="0;34"}
+COLORIZER_green=${COLORIZER_green:="0;32"}
+COLORIZER_cyan=${COLORIZER_cyan:="0;36"}
+COLORIZER_red=${COLORIZER_red:="0;31"}
+COLORIZER_purple=${COLORIZER_purple:="0;35"}
+COLORIZER_yellow=${COLORIZER_yellow:="0;33"}
+COLORIZER_gray=${COLORIZER_gray:="1;30"}
+COLORIZER_light_blue=${COLORIZER_light_blue:="1;34"}
+COLORIZER_light_green=${COLORIZER_light_green:="1;32"}
+COLORIZER_light_cyan=${COLORIZER_light_cyan:="1;36"}
+COLORIZER_light_red=${COLORIZER_light_red:="1;31"}
+COLORIZER_light_purple=${COLORIZER_light_purple:="1;35"}
+COLORIZER_light_yellow=${COLORIZER_light_yellow:="1;33"}
+COLORIZER_light_gray=${COLORIZER_light_gray:="0;37"}
 
 # Somewhat special colors
-COLORIZER_black="0;30"
-COLORIZER_white="1;37"
-COLORIZER_none="0"
-
-##
-# Add escape sequences to defined color codes
-#
-# Must never be called outside of this script, as it only is allowed to be
-# called once
-#
-# It's only a function to allow local variables
-##
-COLORIZER_add_escape_sequences() {
-    local color
-    for color in blue green cyan red purple yellow gray; do
-        eval "COLORIZER_${color}=\"\${COLORIZER_START}\${COLORIZER_${color}}\${COLORIZER_END}\""
-        eval "COLORIZER_light_${color}=\"\${COLORIZER_START}\${COLORIZER_light_${color}}\${COLORIZER_END}\""
-    done
-
-    for color in black white none; do
-        eval "COLORIZER_${color}=\"\${COLORIZER_START}\${COLORIZER_${color}}\${COLORIZER_END}\""
-    done
-}
+COLORIZER_black=${COLORIZER_black:="0;30"}
+COLORIZER_white=${COLORIZER_white:="1;37"}
+COLORIZER_none=${COLORIZER_none:="0"}
 
 ##
 # Parse the input and return the ansi code output processed output
 ##
 COLORIZER_process_input() {
+    local prompt_option="${1}"
+    local strip_option="${2}"
+    shift 2
     local processed="${*}"
     local pseudoTag=""
 
@@ -82,6 +65,7 @@ COLORIZER_process_input() {
     ARRAY_define "stack"
 
     local result=""
+    local ansiToken=""
 
     result="${processed%%<*}"
     if [ "${result}" != "" ] && [ "${result}" != "${processed}" ]; then
@@ -105,22 +89,32 @@ COLORIZER_process_input() {
         fi
 
         # Apply ansi formatting
-        pseudoTag="${pseudoTag/-/_}"
-        if [ "${pseudoTag:0:1}" != "/" ]; then
-            # Opening Tag
-            eval "result=\"\${result}\${COLORIZER_${pseudoTag}}\""
-        else
-            # Closing Tag
-            if [ "$(ARRAY_count "stack")" -eq 0 ]; then
-                result="${result}${COLORIZER_none}"
+        if [ -z "${strip_option}" ]; then
+            pseudoTag="${pseudoTag/-/_}"
+            if [ "${pseudoTag:0:1}" != "/" ]; then
+                # Opening Tag
+                eval "ansiToken=\"\${COLORIZER_${pseudoTag}}\""
             else
-                eval "result=\"\${result}\${COLORIZER_$(ARRAY_peek "stack")}\""
+                # Closing Tag
+                if [ "$(ARRAY_count "stack")" -eq 0 ]; then
+                    ansiToken="${COLORIZER_none}"
+                else
+                    eval "ansiToken=\"\${COLORIZER_$(ARRAY_peek "stack")}\""
+                fi
             fi
+
+            # Add escape codes
+            ansiToken="${COLORIZER_START}${ansiToken}${COLORIZER_END}"
+            if [ "${prompt_option}" = "SET" ]; then
+                ansiToken="\[${ansiToken}\]"
+            fi
+
+            result="${result}${ansiToken}"
         fi
 
         # Cut processed portion from stream
         processed="${processed#*>}"
-        
+
         # Update result with next content part
         result="${result}${processed%%<*}"
     done
@@ -146,22 +140,30 @@ COLORIZER_process_input() {
 # The -n option may be specified, which will behave exactly like echo -n, aka
 # omitting the newline.
 #
+# To use ansi in a prompt without behaving badly, using the -p option.
+#
 # @option -n omit the newline
+# @option -p escape ansi for prompt usage
+# @option -s instead of replacing with ansi, just strip the tags
 # @param [string,...]
 ##
 colorize() {
     local OPTIND=1
     local newline_option=""
+    local prompt_option=""
+    local strip_option=""
     local option=""
-    while getopts ":n" option; do
+    while getopts ":nps" option; do
         case "${option}" in
             n) newline_option="SET";;
+            p) prompt_option="SET";;
+            s) strip_option="SET";;
             \?) echo "Invalid option (-${OPTARG}) given to colorize"; exit 42;;
         esac
     done
     shift $((OPTIND-1))
 
-    local processed_message="$(COLORIZER_process_input "${@}")"
+    local processed_message="$(COLORIZER_process_input "${prompt_option}" "${strip_option}" "${@}")"
 
     if [ "${newline_option}" = "SET" ]; then
         echo -en "${processed_message}"
@@ -172,6 +174,3 @@ colorize() {
 
 # Allow alternate spelling
 alias colourise=colorize
-
-# Initialize the color codes
-COLORIZER_add_escape_sequences
