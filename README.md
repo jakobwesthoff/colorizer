@@ -80,11 +80,13 @@ containing the `colorize.sh` file.
 
 ## Available Color-Tags
 
-Currently all *16* default ANSI terminal colors are supported. Maybe support
-for the extended 256 colors modern terminals are capable of displaying will be
-added in the future.
+Currently all *16* default ANSI terminal foreground colors plus all *16* background
+colors are supported. Maybe support for the extended 256 colors modern terminals
+are capable of displaying will be added in the future.
 
-Currently the following tags are supported:
+### Foreground Colors
+
+The following foreground color tags are supported:
 
 Color Tag                                      | Generated ANSI Code
 ---------------------------------------------- | -------------------
@@ -106,6 +108,30 @@ Color Tag                                      | Generated ANSI Code
 &lt;**black**&gt;…&lt;/black&gt;               | \033[0;30m
 &lt;**none**&gt;…&lt;/none&gt;                 | \033[0m
 
+### Background Colors
+
+Background colors display text on a colored background. Light backgrounds use
+black text, dark backgrounds use white text for optimal readability:
+
+Color Tag                                                  | Generated ANSI Code
+---------------------------------------------------------- | -------------------
+&lt;**bg-red**&gt;…&lt;/bg-red&gt;                         | \033[0;37;41m
+&lt;**bg-green**&gt;…&lt;/bg-green&gt;                     | \033[0;30;42m
+&lt;**bg-yellow**&gt;…&lt;/bg-yellow&gt;                   | \033[0;30;43m
+&lt;**bg-blue**&gt;…&lt;/bg-blue&gt;                       | \033[0;37;44m
+&lt;**bg-purple**&gt;…&lt;/bg-purple&gt;                   | \033[0;37;45m
+&lt;**bg-cyan**&gt;…&lt;/bg-cyan&gt;                       | \033[0;30;46m
+&lt;**bg-light-red**&gt;…&lt;/bg-light-red&gt;             | \033[0;30;101m
+&lt;**bg-light-green**&gt;…&lt;/bg-light-green&gt;         | \033[0;30;102m
+&lt;**bg-light-yellow**&gt;…&lt;/bg-light-yellow&gt;       | \033[0;30;103m
+&lt;**bg-light-blue**&gt;…&lt;/bg-light-blue&gt;           | \033[0;30;104m
+&lt;**bg-light-purple**&gt;…&lt;/bg-light-purple&gt;       | \033[0;30;105m
+&lt;**bg-light-cyan**&gt;…&lt;/bg-light-cyan&gt;           | \033[0;30;106m
+&lt;**bg-gray**&gt;…&lt;/bg-gray&gt;                       | \033[0;37;47m
+&lt;**bg-light-gray**&gt;…&lt;/bg-light-gray&gt;           | \033[0;30;47m
+&lt;**bg-white**&gt;…&lt;/bg-white&gt;                     | \033[0;30;107m
+&lt;**bg-black**&gt;…&lt;/bg-black&gt;                     | \033[0;37;40m
+
 ## Limitations
 
 Currently this library has only been tested with the
@@ -119,11 +145,6 @@ do all the XML-tag extraction and parsing using only shell builtins to provide
 a fast and nice user experience. Therefore making the library compatible
 with less powerful shells may be a difficult task. However a compatibility
 layer exists, which may allow implementation of complex tasks for different shells.
-
-Background color setting is currently not supported. I simply don't have real
-demand for that in most of my scripts. If you want this feature just drop me
-a line, maybe with an example how the syntax for this could look. I will see
-what I can do then. :)
 
 ## How you can help
 

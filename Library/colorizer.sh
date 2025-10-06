@@ -51,6 +51,24 @@ COLORIZER_black=${COLORIZER_black:="0;30"}
 COLORIZER_white=${COLORIZER_white:="1;37"}
 COLORIZER_none=${COLORIZER_none:="0"}
 
+# Background colors (text on colored background)
+COLORIZER_bg_blue=${COLORIZER_bg_blue:="0;37;44"}
+COLORIZER_bg_green=${COLORIZER_bg_green:="0;30;42"}
+COLORIZER_bg_cyan=${COLORIZER_bg_cyan:="0;30;46"}
+COLORIZER_bg_red=${COLORIZER_bg_red:="0;37;41"}
+COLORIZER_bg_purple=${COLORIZER_bg_purple:="0;37;45"}
+COLORIZER_bg_yellow=${COLORIZER_bg_yellow:="0;30;43"}
+COLORIZER_bg_gray=${COLORIZER_bg_gray:="0;37;47"}
+COLORIZER_bg_light_blue=${COLORIZER_bg_light_blue:="0;30;104"}
+COLORIZER_bg_light_green=${COLORIZER_bg_light_green:="0;30;102"}
+COLORIZER_bg_light_cyan=${COLORIZER_bg_light_cyan:="0;30;106"}
+COLORIZER_bg_light_red=${COLORIZER_bg_light_red:="0;30;101"}
+COLORIZER_bg_light_purple=${COLORIZER_bg_light_purple:="0;30;105"}
+COLORIZER_bg_light_yellow=${COLORIZER_bg_light_yellow:="0;30;103"}
+COLORIZER_bg_light_gray=${COLORIZER_bg_light_gray:="0;30;47"}
+COLORIZER_bg_black=${COLORIZER_bg_black:="0;37;40"}
+COLORIZER_bg_white=${COLORIZER_bg_white:="0;30;107"}
+
 ##
 # Parse the input and return the ansi code output processed output
 ##
@@ -90,7 +108,7 @@ COLORIZER_process_input() {
 
         # Apply ansi formatting
         if [ -z "${strip_option}" ]; then
-            pseudoTag="${pseudoTag/-/_}"
+            pseudoTag="${pseudoTag//-/_}"
             if [ "${pseudoTag:0:1}" != "/" ]; then
                 # Opening Tag
                 eval "ansiToken=\"\${COLORIZER_${pseudoTag}}\""
