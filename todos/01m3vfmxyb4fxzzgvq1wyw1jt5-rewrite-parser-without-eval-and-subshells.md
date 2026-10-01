@@ -27,8 +27,6 @@ called through `$(...)`.
   twice, `$(ARRAY_count)`), plus one per call for the result and one for
   the final count. 300 lines with three tags each took 2.35 to 2.47 s
   (bash 5.3.20 and 3.2.57, macOS), about 8 ms per line.
-- **The dashed-parent bug** (`01m3vfmxyb4fxzzgvq1wyw1jsw`) is one
-  instance of pasting names into `${...}`.
 
 ## Proposal (input, not decided)
 

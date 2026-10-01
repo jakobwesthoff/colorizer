@@ -82,6 +82,7 @@ COLORIZER_process_input() {
     shift 2
     local processed="${*}"
     local pseudoTag=""
+    local parentTag=""
 
     local stack
     ARRAY_define "stack"
@@ -121,7 +122,10 @@ COLORIZER_process_input() {
                 if [ "$(ARRAY_count "stack")" -eq 0 ]; then
                     ansiToken="${COLORIZER_none}"
                 else
-                    eval "ansiToken=\"\${COLORIZER_$(ARRAY_peek "stack")}\""
+                    # The stack holds tag names as written, so the parent's
+                    # name needs the same mapping as an opening tag's.
+                    parentTag="$(ARRAY_peek "stack")"
+                    eval "ansiToken=\"\${COLORIZER_${parentTag//-/_}}\""
                 fi
             fi
 

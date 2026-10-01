@@ -24,8 +24,7 @@ returned; zsh reports it and continues with an empty code.
 
 Characters that are valid inside `${...}` are not an error but are
 evaluated instead: see bug `01m3vjjpv54172b98ekcekpfj6` (tag text runs as
-a command) and bug `01m3vfmxyb4fxzzgvq1wyw1jsw` (`-` read as a default
-value).
+a command).
 
 ## Test that detects it
 

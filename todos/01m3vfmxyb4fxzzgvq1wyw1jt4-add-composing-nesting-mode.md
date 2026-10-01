@@ -17,11 +17,10 @@ colorize "<bold>a<red>b</red>c</bold>"
 
 ```
 colorize "<bg-red>a<red>b</red></bg-red>"
-^[[0;37;41ma^[[0;31mb ...
+^[[0;37;41ma^[[0;31mb^[[0;37;41m^[[0m
 ```
 
-The background is lost under the inner colour. (The `ESC[redm` after it
-is a separate bug: `01m3vfmxyb4fxzzgvq1wyw1jsw`.)
+The background is lost under the inner colour.
 
 An attribute inside a colour already works, because attribute codes have
 no `0;`: `<red><bold>x</bold></red>`.
@@ -48,7 +47,6 @@ inner colour clears it. Making it the default would be a major version.
 
 ## Related
 
-- Needs the dashed-parent fix first: `01m3vfmxyb4fxzzgvq1wyw1jsw`.
 - The parser rewrite keeps the stack as a string, which makes joining the
   codes cheap: `01m3vfmxyb4fxzzgvq1wyw1jt5`.
 - ekkocli's `k8s:drift` only needs nesting if it moves to markup via the

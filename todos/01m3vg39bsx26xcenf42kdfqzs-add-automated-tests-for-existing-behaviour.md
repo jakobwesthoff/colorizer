@@ -77,7 +77,7 @@ nesting, options, errors, palette, loading, compatibility), passing on
 
 Bug todos written while building the suite, each with its detecting test:
 
-- `01m3vfmxyb4fxzzgvq1wyw1jsw` dashed parent tag not restored (test added)
+- `01m3vfmxyb4fxzzgvq1wyw1jsw` dashed parent tag not restored (fixed)
 - `01m3vj6swnh7hhb76kzx9x91pe` zsh interprets backslashes twice
 - `01m3vjf7nwsj3jd7vmc4e5wb1d` text that is an `echo` option is lost
 - `01m3vjjpv54172b98ekcekpfj2` malformed markup returns status 0

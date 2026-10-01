@@ -54,20 +54,19 @@ setup_file() {
   assert_output '^[[1ma^[[0;31mb^[[1mc^[[0m'
 }
 
-# Bug todo 01m3vfmxyb4fxzzgvq1wyw1jsw, which has the test for the fixed
-# behaviour: the parent's name is looked up without turning `-` into `_`,
-# which the shell reads as `${COLORIZER_light-red}`, "red" when
-# COLORIZER_light is unset.
-@test "closing a tag inside a dashed parent emits the rest of the parent's name" {
+# The parent's name is stored as written, so it needs the same `-` to `_`
+# mapping as on opening; unmapped, the shell would read
+# `${COLORIZER_light-red}` as a default-value expansion.
+@test "closing a nested tag restores a dashed parent" {
   run colorize_in_test_shell '<light-red>a<blue>b</blue>c</light-red>'
 
   assert_status 0
-  assert_output '^[[1;31ma^[[0;34mb^[[redmc^[[0m'
+  assert_output '^[[1;31ma^[[0;34mb^[[1;31mc^[[0m'
 
   run colorize_in_test_shell '<bg-light-red>a<blue>b</blue>c</bg-light-red>'
 
   assert_status 0
-  assert_output '^[[0;30;101ma^[[0;34mb^[[light-redmc^[[0m'
+  assert_output '^[[0;30;101ma^[[0;34mb^[[0;30;101mc^[[0m'
 }
 
 @test "a dashed tag inside a plain one is restored correctly" {
