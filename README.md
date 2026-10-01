@@ -148,19 +148,26 @@ layer exists, which may allow implementation of complex tasks for different shel
 
 ## Running the tests
 
-The tests use [bats](https://github.com/bats-core/bats-core) and are run
-through [just](https://github.com/casey/just). Each run executes the whole
-suite once per shell; the shell under test is named by `TEST_SHELL`.
+You need [just](https://github.com/casey/just),
+[bats](https://github.com/bats-core/bats-core) and zsh; on macOS
+`brew install just bats-core zsh`. The Docker runs need Docker and nothing
+else, as the images bring their own tools.
 
     just test                              # bash and zsh on this machine
+    just test-shell zsh                    # one shell only
     just shells="bash /bin/bash zsh" test  # pick the shells yourself
     just test-docker                       # bash 3.2, 4.4 and 5.2 in Docker,
                                            # each with zsh and busybox ash
     just test-all                          # both
-    just lint                              # shellcheck the test code
+    just lint                              # shellcheck the test code (needs shellcheck)
 
-`just test-docker` needs Docker. It builds one image per bash version from the
-official `bash` images and mounts the repository read-only.
+Every run executes the whole suite once per shell. The shell under test is
+named by `TEST_SHELL`, so running `bats tests/` directly needs it set:
+`TEST_SHELL=zsh bats tests/`. Expected output in the tests is written as
+`cat -v` shows it, with `^[` for the escape character.
+
+`just test-docker` builds one image per bash version from the official `bash`
+images and mounts the repository read-only.
 
 ## How you can help
 
