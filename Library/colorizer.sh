@@ -302,6 +302,14 @@ colorize() {
 #         variable name; 42 for an invalid option
 ##
 colorize_code() {
+    # Shell variables are scoped dynamically: a name refers to the innermost
+    # variable of that name along the call chain. With `-v code`, the
+    # assignment at the end resolves `code` here first, so a local of that
+    # name would receive the sequence and take it along on return, leaving
+    # the caller's variable untouched. Every local of this function therefore
+    # carries the `colorizer_` prefix, which callers must not use for `-v`.
+    # Namerefs (`local -n`) would avoid this, but need bash 4.3 and do not
+    # exist in zsh or busybox ash.
     local OPTIND=1
     local colorizer_option=""
     local colorizer_target=""
