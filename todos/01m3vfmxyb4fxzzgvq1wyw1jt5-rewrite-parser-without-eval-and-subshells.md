@@ -12,11 +12,9 @@ called through `$(...)`.
 - **`eval` on tag names.** The palette lookups paste the tag name into
   `eval`. Names are checked against `[A-Za-z0-9_-]*` first, so input
   cannot run code, but every lookup is still an `eval`.
-- **Errors replace the text.** A mismatched or unclosed tag runs `echo` of
-  the error and `exit 42` inside `$(COLORIZER_process_input ...)`
-  (line 188). The subshell exits, `local` masks the status, and `colorize`
-  prints the error message as the line, with status 0. The README promises
-  "an exit with errorcode 42".
+- **Errors replace the text.** A mismatched or unclosed tag makes the
+  parser print the error as its result and exit 42 from its subshell;
+  `colorize` prints that message as the line and returns 42.
 - **Invalid option ends the caller.** `exit 42` in the `getopts` loop
   (line 183) runs in the caller's shell.
 - **Speed.** Every closing tag costs several subshells (`$(ARRAY_peek)`
@@ -38,8 +36,8 @@ called through `$(...)`.
   validated.
 - Result in a variable (for example `COLORIZER_RESULT`) instead of
   `$(...)`, so errors can return a status.
-- Errors on stderr and `return 42`. Open: whether the invalid-option case
-  keeps `exit 42` for compatibility (see below).
+- Errors on stderr. Open: whether the invalid-option case keeps
+  `exit 42`, while malformed markup returns 42 (see below).
 - Keep loading the `ARRAY_*` files, in case callers use those functions.
 - A test suite before the rewrite, to pin today's output for every case
   that works: the README tag tables, nesting, `-n`, `-p`, `-s`, entities.
@@ -47,10 +45,10 @@ called through `$(...)`.
 ## Backwards compatibility
 
 Output for valid input must stay byte for byte the same; the tests above
-check that. Changes only in cases that are broken today (literal `<`,
-injected code, error text as output). The switch from `exit` to `return`
-changes control flow for callers that expect `colorize` to end the
-script on an invalid option; that needs a decision.
+check that. Changes only where the output is an error message today
+(whether it moves to stderr). A switch from `exit` to `return` for an
+invalid option would change control flow for callers that expect
+`colorize` to end the script; that needs a decision.
 
 ## Related
 

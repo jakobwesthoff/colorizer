@@ -185,7 +185,11 @@ COLORIZER_process_input() {
 #
 # This function is the only public API method to this utillity
 #
-# echo -e is used for output.
+# printf '%b' is used for output, which interprets backslash sequences like
+# echo -e.
+#
+# For malformed markup, the error message is printed instead of the text and
+# the status is 42.
 #
 # The -n option may be specified, which will behave exactly like echo -n, aka
 # omitting the newline.
@@ -213,7 +217,12 @@ colorize() {
     done
     shift $((OPTIND-1))
 
-    local processed_message="$(COLORIZER_process_input "${prompt_option}" "${strip_option}" "${@}")"
+    # Declared apart from the assignment, as `local` would replace the
+    # parser's status with its own. The parser reports malformed markup by
+    # printing the message as its result and exiting with 42.
+    local processed_message
+    processed_message="$(COLORIZER_process_input "${prompt_option}" "${strip_option}" "${@}")"
+    local process_status="${?}"
 
     # `%b` interprets backslash sequences as `echo -e` does, but never takes
     # the text for an option of its own, as `echo` does with `-n` or `-e`.
@@ -225,6 +234,10 @@ colorize() {
     else
         printf '%b\n' "${processed_message}" 2> /dev/null
     fi
+
+    # Returned rather than exited with, so a calling script or an
+    # interactive shell that loaded the library goes on.
+    return "${process_status}"
 }
 
 # Allow alternate spelling. A function rather than an alias, as bash does not

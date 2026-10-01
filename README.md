@@ -24,8 +24,8 @@ You need to escape them using their usual XML entity representation:
     colorize "<cyan>1</cyan> &lt; <purple>2</purple>"
 
 Mismatched tags as well as missing start or end tags will be detected. In this
-case an error message indicating the problem will be echoed back as well as an
-exit with errorcode *42* will be issued.
+case an error message indicating the problem is echoed back instead of the
+text, and `colorize` returns with status *42*. The calling script goes on.
 
 ### Options
 

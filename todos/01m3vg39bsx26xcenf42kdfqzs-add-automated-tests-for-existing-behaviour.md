@@ -80,7 +80,7 @@ Bug todos written while building the suite, each with its detecting test:
 - `01m3vfmxyb4fxzzgvq1wyw1jsw` dashed parent tag not restored (fixed)
 - `01m3vj6swnh7hhb76kzx9x91pe` zsh interprets backslashes twice (fixed)
 - `01m3vjf7nwsj3jd7vmc4e5wb1d` text that is an `echo` option is lost (fixed)
-- `01m3vjjpv54172b98ekcekpfj2` malformed markup returns status 0
+- `01m3vjjpv54172b98ekcekpfj2` malformed markup returns status 0 (fixed)
 - `01m3vjjpv54172b98ekcekpfj3` stray closing tag reports garbage (fixed)
 - `01m3vjjpv54172b98ekcekpfj4` a `<` without `>` loops forever (fixed)
 - `01m3vjjpv54172b98ekcekpfj5` invalid tag names break the output (fixed)

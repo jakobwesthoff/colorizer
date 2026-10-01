@@ -22,28 +22,27 @@ colorize_with_time_limit() {
 colorize \"\$1\"" colorizer-test "${1}"
 }
 
-# Bug todo 01m3vjjpv54172b98ekcekpfj2: the README promises exit code 42.
-@test "a mismatched closing tag replaces the output with a message, status 0" {
+@test "a mismatched closing tag prints a message instead and returns 42" {
   run colorize_in_test_shell '<red>x</green>'
 
-  assert_status 0
+  assert_status 42
   assert_output 'Mismatching colorize tag nesting at <red>...</green>'
 }
 
-# Bug todo 01m3vjjpv54172b98ekcekpfj2.
-@test "an unclosed tag replaces the output with a message, status 0" {
+@test "an unclosed tag prints a message instead and returns 42" {
   run colorize_in_test_shell '<red><blue>x</blue>'
 
-  assert_status 0
+  assert_status 42
   assert_output 'Could not find closing tag for <red>'
 }
 
-# Bug todo 01m3vjjpv54172b98ekcekpfj2: the calling script goes on.
+# colorize returns the status instead of exiting, so a calling script, or an
+# interactive shell that loaded the library, goes on.
 @test "malformed markup does not end the calling script" {
-  run in_test_shell 'colorize "<red>x"; echo "still running"'
+  run in_test_shell 'colorize "<red>x"; echo "colorize returned $?, still running"'
 
   assert_status 0
-  assert_output "$(printf 'Could not find closing tag for <red>\nstill running')"
+  assert_output "$(printf 'Could not find closing tag for <red>\ncolorize returned 42, still running')"
 }
 
 @test "a closing tag without an opening one is reported cleanly" {
