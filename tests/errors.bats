@@ -99,15 +99,15 @@ colorize \"\$1\"" colorizer-test "${1}"
   esac
 }
 
-# Bug todo 01m3vjjpv54172b98ekcekpfj6: bash and zsh `eval` the tag text when
-# pushing it onto the stack; ash's compatibility layer quotes it.
-@test "a command substitution in tag text runs in bash and zsh" {
+# Bug todo 01m3vjjpv54172b98ekcekpfj6: the palette lookup evaluates
+# `${COLORIZER_x:_$(...)}`, and zsh runs the command substitution in it.
+@test "a command substitution in tag text runs in zsh" {
   export MARKER="${BATS_TEST_TMPDIR}/ran"
 
   run --separate-stderr colorize_in_test_shell 'a<x:-$(touch $MARKER)>b</x:-$(touch $MARKER)>'
 
   case "$(test_shell_kind)" in
-    ash) [ ! -e "${MARKER}" ] ;;
-    *) [ -e "${MARKER}" ] ;;
+    zsh) [ -e "${MARKER}" ] ;;
+    *) [ ! -e "${MARKER}" ] ;;
   esac
 }

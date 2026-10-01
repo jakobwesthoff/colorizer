@@ -87,7 +87,7 @@ Bug todos written while building the suite, each with its detecting test:
 - `01m3vjjpv54172b98ekcekpfj6` tag text runs as a command (security)
 - `01m3vjvakjz2b1z1rn3d13tqdc` `colourise` missing in bash scripts (fixed)
 - `01m3vjvakkc14se0106bstkvma` loading under `set -u` fails in zsh and ash (fixed)
-- `01m3vk1qb40aghhdk8ngs7yz5r` `ARRAY_push` evaluates its value
+- `01m3vk1qb40aghhdk8ngs7yz5r` `ARRAY_push` evaluates its value (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5s` `ARRAY_count` ignores empty values (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5t` peek and pop on an empty array (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5v` bash `ARRAY_unset` leaves a hole (fixed)

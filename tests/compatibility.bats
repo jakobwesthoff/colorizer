@@ -43,27 +43,17 @@ done'
   assert_output "$(printf 'a b\nback\\slash\nsemi;colon\n*')"
 }
 
-# Bug todo 01m3vk1qb40aghhdk8ngs7yz5r: ARRAY_push evaluates the value; bash
-# and zsh inside double quotes, the default layer inside single quotes.
-@test "values with quotes or \$: expanded in bash and zsh, a syntax error for ' in ash" {
+@test "push stores every value as it is given" {
   export HOME="/home/colorizer-test"
 
   run in_test_shell 'ARRAY_define list
-ARRAY_push list "say \"hi\""; ARRAY_peek list
-ARRAY_push list "cost \$HOME"; ARRAY_peek list'
+for value in "say \"hi\"" "cost \$HOME" "it'"'"'s" "\$(echo ran)"; do
+  ARRAY_push list "${value}"
+  ARRAY_peek list
+done'
 
   assert_status 0
-  case "$(test_shell_kind)" in
-    ash) assert_output "$(printf 'say "hi"\ncost $HOME')" ;;
-    *) assert_output "$(printf 'say hi\ncost /home/colorizer-test')" ;;
-  esac
-
-  run --separate-stderr in_test_shell 'ARRAY_define list; ARRAY_push list "it'"'"'s"; ARRAY_peek list'
-
-  case "$(test_shell_kind)" in
-    ash) [[ "${stderr}" == *"unterminated quoted string"* ]] ;;
-    *) assert_output "it's" ;;
-  esac
+  assert_output "$(printf '%s\n' 'say "hi"' 'cost $HOME' "it's" '$(echo ran)')"
 }
 
 @test "an array that was never defined counts as empty under set -u" {

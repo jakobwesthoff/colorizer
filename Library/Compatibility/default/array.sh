@@ -67,7 +67,9 @@ ARRAY_push() {
 
     local index="$(ARRAY_count "${name}")"
 
-    eval "${name}_${index}='${value}'"
+    # The evaluated code names the value instead of containing it, so the
+    # value is expanded once, as data, and never parsed as shell code.
+    eval "${name}_${index}=\"\${value}\""
     eval "${name}_COUNT=$(( ${index} + 1 ))"
 }
 

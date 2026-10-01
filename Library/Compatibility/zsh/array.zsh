@@ -88,7 +88,9 @@ ARRAY_set() {
     local index="$((${2}+1))"
     local value="${3}"
 
-    eval "${name}[${index}]=\"${value}\""
+    # The evaluated code names the value instead of containing it, so the
+    # value is expanded once, as data, and never parsed as shell code.
+    eval "${name}[${index}]=\"\${value}\""
 }
 
 ##
@@ -103,7 +105,9 @@ ARRAY_push() {
     
     local index="$(($(eval "echo \${#${name}[@]}")+1))"
 
-    eval "${name}[${index}]=\"${value}\""
+    # The evaluated code names the value instead of containing it, so the
+    # value is expanded once, as data, and never parsed as shell code.
+    eval "${name}[${index}]=\"\${value}\""
 }
 
 ##
