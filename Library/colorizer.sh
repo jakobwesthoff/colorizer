@@ -110,10 +110,10 @@ COLORIZER_process_input() {
         pseudoTag="${pseudoTag%%>*}"
 
         # Only names that can be part of a variable name are tags. Anything
-        # else between `<` and `>` is plain text, so it never reaches the
-        # palette lookup's `eval` as code.
+        # else between `<` and `>`, including nothing, is plain text, so it
+        # never reaches the palette lookup's `eval` as code.
         case "${pseudoTag#/}" in
-            *[!A-Za-z0-9_-]*)
+            "" | *[!A-Za-z0-9_-]*)
                 result="${result}<${pseudoTag}>"
                 processed="${processed#*>}"
                 result="${result}${processed%%<*}"

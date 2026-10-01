@@ -51,11 +51,11 @@ colorize \"\$1\"" colorizer-test "${1}"
   assert_output 'Mismatching colorize tag nesting at <>...</red>'
 }
 
-@test "an empty tag works like an undefined one" {
+@test "an empty tag is printed as text" {
   run colorize_in_test_shell '<>x</>'
 
   assert_status 0
-  assert_output '^[[mx^[[0m'
+  assert_output '<>x</>'
 }
 
 # Only names that can be part of a variable name are tags, so text between
