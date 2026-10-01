@@ -90,7 +90,7 @@ Bug todos written while building the suite, each with its detecting test:
 - `01m3vk1qb40aghhdk8ngs7yz5r` `ARRAY_push` evaluates its value
 - `01m3vk1qb40aghhdk8ngs7yz5s` `ARRAY_count` ignores empty values (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5t` peek and pop on an empty array (fixed)
-- `01m3vk1qb40aghhdk8ngs7yz5v` bash `ARRAY_unset` leaves a hole
+- `01m3vk1qb40aghhdk8ngs7yz5v` bash `ARRAY_unset` leaves a hole (fixed)
 
 ## Open
 

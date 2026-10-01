@@ -135,9 +135,7 @@ ARRAY_count list; ARRAY_peek list'
   assert_output "$(printf '1\na')"
 }
 
-# Bug todo 01m3vk1qb40aghhdk8ngs7yz5v: bash leaves a hole that peek and push
-# do not expect; zsh moves the later elements down.
-@test "unset of a middle element: bash leaves a hole that breaks peek and push" {
+@test "unset of a middle element keeps peek and push working" {
   [ "$(test_shell_kind)" != "ash" ] || skip "the default layer has no ARRAY_unset"
 
   run in_test_shell 'ARRAY_define list
@@ -148,8 +146,5 @@ ARRAY_push list d
 echo "count=$(ARRAY_count list) peek=$(ARRAY_peek list)"'
 
   assert_status 0
-  case "$(test_shell_kind)" in
-    bash) assert_output "$(printf 'count=2 peek=\ncount=2 peek=')" ;;
-    zsh) assert_output "$(printf 'count=2 peek=c\ncount=3 peek=d')" ;;
-  esac
+  assert_output "$(printf 'count=2 peek=c\ncount=3 peek=d')"
 }

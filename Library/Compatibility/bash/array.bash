@@ -149,4 +149,9 @@ ARRAY_unset() {
     local index="${2}"
 
     eval "unset ${name}[${index}]"
+
+    # `unset` leaves a hole, while peek and push expect the indexes 0 to
+    # count - 1. Re-packing moves the later elements down, as in zsh. The
+    # `+` form keeps an emptied array from failing `set -u` before bash 4.4.
+    eval "${name}=(\${${name}[@]+\"\${${name}[@]}\"})"
 }
