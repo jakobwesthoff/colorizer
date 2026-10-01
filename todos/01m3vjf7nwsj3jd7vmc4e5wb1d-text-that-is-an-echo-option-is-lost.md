@@ -54,6 +54,12 @@ today's bugs change. In zsh that includes the two tests of bug
 `01m3vj6swnh7hhb76kzx9x91pe` (backslashes interpreted twice), which this
 change fixes as well. Not yet tried in busybox ash.
 
+Caveat: `%b` and `echo -e` are not identical. For `\u` without hex digits,
+bash's `echo -e` prints `\u` silently, while bash's `printf '%b'` prints
+it too but writes `missing unicode digit for \u` to stderr (bash 5.3.20).
+The README's prompt example contains `\u` (`tests/text.bats`, "the README's
+prompt example"), so with this change it would warn in bash.
+
 ## Decision
 
 _Not yet established._

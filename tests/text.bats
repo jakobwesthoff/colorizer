@@ -65,6 +65,20 @@ setup_file() {
   assert_output '^[[0;31m100%^[[0m %s %d'
 }
 
+@test "arguments are joined before parsing, so a tag can span them" {
+  run colorize_in_test_shell '<red>a' 'b</red>'
+
+  assert_status 0
+  assert_output '^[[0;31ma b^[[0m'
+}
+
+@test "a tag can span a newline" {
+  run colorize_in_test_shell "$(printf '<red>first\nsecond</red>')"
+
+  assert_status 0
+  assert_output "$(printf '^[[0;31mfirst\nsecond^[[0m')"
+}
+
 @test "&lt; and &gt; become < and >, outside and inside tags" {
   run colorize_in_test_shell '1 &lt; 2 <red>&gt;&gt;</red> &lt;&lt;'
 
@@ -117,6 +131,19 @@ setup_file() {
   case "$(test_shell_kind)" in
     zsh) assert_output 'a^H' ;;
     *) assert_output 'a\b' ;;
+  esac
+}
+
+# The README's prompt example. Its bash prompt escapes go through `echo -e`:
+# bash and ash leave `\u` without hex digits alone, zsh's echo turns it into
+# a NUL byte (one interpretation is enough for that).
+@test "the README's prompt example keeps its prompt escapes, except \\u in zsh" {
+  run colorize_in_test_shell -p '<yellow>\@ \u@\h:\W</yellow> $ '
+
+  assert_status 0
+  case "$(test_shell_kind)" in
+    zsh) assert_output '\[^[[0;33m\]\@ ^@@\h:\W\[^[[0m\] $ ' ;;
+    *) assert_output '\[^[[0;33m\]\@ \u@\h:\W\[^[[0m\] $ ' ;;
   esac
 }
 
