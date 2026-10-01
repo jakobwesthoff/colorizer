@@ -95,11 +95,11 @@ Bug todos written while building the suite, each fixed test-first since
 - found while fixing, no todo: the default layer's `ARRAY_count` failed
   under `set -u` for an array that was never defined (fixed)
 
+Decided 2026-10-01: bats comes from the system's packages (Alpine's 1.12.0
+in Docker, whatever the host has), not from a submodule. CI is
+`.github/workflows/tests.yml`, running `just lint` and `just test-docker`.
+
 ## Open
 
-- The zsh minimum (5.0.8, `zshusers/zsh`); whether bats installs there is
-  unchecked.
-- CI (GitHub Actions running `just test-docker`).
-- The bats version: Docker uses Alpine's package (1.12.0), the host
-  whatever is installed (1.14.0 on the developer machine). Pinning bats as
-  a git submodule was raised, not decided.
+- A zsh minimum below 5.9 (`zshusers/zsh` has older tags; whether bats
+  installs there is unchecked). Set aside by the user on 2026-10-01.
