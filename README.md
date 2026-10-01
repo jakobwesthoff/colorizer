@@ -17,15 +17,21 @@ Nested tags are possible as well:
 
     colorize "<green>This is a <yellow>yellow colored</yellow> string inside a green one</green>"
 
-Due to the XML-like nature of the used definition language `<` (less than) and
-`>` (greater than) characters can no longer be used inside the provided string.
-You need to escape them using their usual XML entity representation:
+Due to the XML-like nature of the used definition language, `<` (less than) and
+`>` (greater than) characters that look like a tag are taken as one. Escape
+them using their usual XML entity representation:
 
     colorize "<cyan>1</cyan> &lt; <purple>2</purple>"
 
+A tag name consists of letters, digits, `_` and `-`. A name that is not
+defined resets the colors. Anything else between `<` and `>`, and a `<` with
+no `>` after it, is printed as it is, so `colorize "1 < 2"` works without
+escaping. Text from outside your script, such as command output, can contain
+something that looks like a tag, so escape `<` and `>` in it.
+
 Mismatched tags as well as missing start or end tags will be detected. In this
-case an error message indicating the problem is echoed back instead of the
-text, and `colorize` returns with status *42*. The calling script goes on.
+case the problem is reported on stderr, the text is printed without its tags,
+and `colorize` returns with status *42*. The calling script goes on.
 
 ### Options
 
@@ -35,12 +41,15 @@ Option | Type    | Description
 `-p`   | Boolean | Escape ANSI colorcodes for prompt usage
 `-s`   | Boolean | Strip XML color tags rather than injecting ANSI
 
+An unknown option is reported on stderr, and `colorize` returns with status
+*42*.
+
 ### Examples
 
-**Colorizer** uses the `echo -e` command to output the formatted information.
-Therefore a newline is automatically echoed at the end of the string. If you do
-not want to output this newline just supply the `-n` option to `colorize`. In
-this case `echo -en` is used for output to suppress the newline:
+**Colorizer** prints the formatted information with `printf '%b'`, which
+interprets backslash sequences like `echo -e`. A newline is printed at the end
+of the string. If you do not want to output this newline just supply the `-n`
+option to `colorize`:
 
     colorize -n "<blue>Question:</blue> Do you think this library rocks? [Y/n]"
 
@@ -135,17 +144,21 @@ Color Tag                                                  | Generated ANSI Code
 
 ## Limitations
 
-Currently this library has only been tested with the
-[Bash](http://www.gnu.org/software/bash/) (>3.x),
-[ZSH](http://zsh.sourceforge.net/) shell (>5.x) and
-[busybox](http://www.busybox.net/) ash. The code should run in every POSIX
-compatible shell as well, but I didn't have the time to test those yet.
+The test suite runs with [Bash](http://www.gnu.org/software/bash/) 3.2, 4.4
+and 5.2, [ZSH](http://zsh.sourceforge.net/) 5.9 and
+[busybox](http://www.busybox.net/) 1.37 ash (see
+[Running the tests](#running-the-tests)). Other shells are untested; dash, for
+example, does not work, as it has neither `source` nor `${var//...}`.
 
 **Colorizer** uses a lot of quite sophisticated variable expansion features, to
 do all the XML-tag extraction and parsing using only shell builtins to provide
 a fast and nice user experience. Therefore making the library compatible
 with less powerful shells may be a difficult task. However a compatibility
 layer exists, which may allow implementation of complex tasks for different shells.
+
+Only `colorize`, `colourise` and the `COLORIZER_*` variables are meant to be
+used. The functions named `COLORIZER_*` and `ARRAY_*` that the library defines
+are internal and may change.
 
 ## Running the tests
 

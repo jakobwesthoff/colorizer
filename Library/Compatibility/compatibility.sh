@@ -27,6 +27,9 @@
 # This file does include generic entrypoint to the compatibility library, which
 # loads the compatibility layer for your currently used shell
 #
+# The ARRAY_* functions it provides are internal to colorizer's tag parser,
+# not part of its public interface.
+#
 ####
 
 # Each shell sets only its own version variable; the defaults keep the
