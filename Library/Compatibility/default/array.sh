@@ -96,7 +96,14 @@ ARRAY_peek() {
 ARRAY_pop() {
     local name="${1}"
 
+    # An empty array has nothing to remove; `unset name_-1` would end the
+    # calling script, as an error in a special builtin does in POSIX shells.
     local index="$(( $(ARRAY_count "${name}") - 1 ))"
+    if [ "${index}" -lt 0 ]; then
+        echo ""
+        return 0
+    fi
+
     eval "echo \"\${${name}_${index}}\""
     eval "${name}_COUNT=${index}"
     eval "unset ${name}_${index}"

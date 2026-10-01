@@ -80,47 +80,21 @@ ARRAY_push list "two"; ARRAY_count list'
   esac
 }
 
-# Bug todo 01m3vk1qb40aghhdk8ngs7yz5t: pop computes the last index of an
-# empty array as -1, which each layer mishandles differently.
-@test "pop on an empty array: errors in bash and zsh, a 1 in ash" {
+@test "peek and pop on an empty array print nothing and report no error" {
   run --separate-stderr in_test_shell 'ARRAY_define list
 echo "peek: [$(ARRAY_peek list)]"
 echo "pop: [$(ARRAY_pop list)]"
 echo "count: $(ARRAY_count list)"'
 
-  case "$(test_shell_kind)" in
-    bash)
-      assert_output "$(printf 'peek: []\npop: []\ncount: 0')"
-      [[ "${stderr}" == *"bad array subscript"* ]]
-      ;;
-    zsh)
-      assert_output "$(printf 'peek: []\npop: []\ncount: 0')"
-      [[ "${stderr}" == *"assignment to invalid subscript range"* ]]
-      ;;
-    ash)
-      assert_output "$(printf 'peek: []\npop: [1]\ncount: 0')"
-      [[ "${stderr}" == *"bad variable name"* ]]
-      ;;
-  esac
-}
+  assert_output "$(printf 'peek: []\npop: []\ncount: 0')"
+  [ -z "${stderr}" ]
 
-# Bug todo 01m3vk1qb40aghhdk8ngs7yz5t: in ash the default layer's
-# `unset list_-1` is an error in a special builtin, which ends the script.
-@test "a pop on an empty array: harmless in bash and zsh, ends the script in ash" {
   run in_test_shell 'ARRAY_define list
-ARRAY_pop list > /dev/null 2>&1
+ARRAY_pop list > /dev/null
 echo "still running, count $(ARRAY_count list)"'
 
-  case "$(test_shell_kind)" in
-    ash)
-      assert_status 2
-      assert_output ''
-      ;;
-    *)
-      assert_status 0
-      assert_output 'still running, count 0'
-      ;;
-  esac
+  assert_status 0
+  assert_output 'still running, count 0'
 }
 
 @test "the default layer has no ARRAY_get, ARRAY_set and ARRAY_unset" {

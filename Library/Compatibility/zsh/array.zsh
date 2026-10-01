@@ -136,6 +136,12 @@ ARRAY_pop() {
     local index="$(eval "echo \${#${name}[@]}")"
 
     echo "$(ARRAY_peek "${name}")"
+
+    # Nothing to remove from an empty array, and no last index to name.
+    if [ "${index}" -eq 0 ]; then
+        return 0
+    fi
+
     ARRAY_unset "${name}" "$((${index}-1))"
 }
 

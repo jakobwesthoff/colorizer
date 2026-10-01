@@ -89,7 +89,7 @@ Bug todos written while building the suite, each with its detecting test:
 - `01m3vjvakkc14se0106bstkvma` loading under `set -u` fails in zsh and ash (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5r` `ARRAY_push` evaluates its value
 - `01m3vk1qb40aghhdk8ngs7yz5s` `ARRAY_count` ignores empty values
-- `01m3vk1qb40aghhdk8ngs7yz5t` peek and pop on an empty array
+- `01m3vk1qb40aghhdk8ngs7yz5t` peek and pop on an empty array (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5v` bash `ARRAY_unset` leaves a hole
 
 ## Open
