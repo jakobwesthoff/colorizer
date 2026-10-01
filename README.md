@@ -196,6 +196,30 @@ Tag                                                        | Generated ANSI Code
 
 Terminals without double underline show a single one.
 
+## Custom Tags and Themes
+
+Every tag is looked up as the variable `COLORIZER_<name>`, with a `-` in the
+tag name turned into `_`. Any such variable you set is a tag, so a theme is a
+set of variables. The value is the list of ANSI parameters, without the
+leading `\033[` and the trailing `m`:
+
+    COLORIZER_title="1;3;4:2"            # bold, italic, double underline
+    COLORIZER_stored="${COLORIZER_red}"  # after loading the library
+    COLORIZER_drift_header="1;34"        # used as <drift-header>
+
+    colorize "<title>Drift report</title>"
+    colorize "<stored>- replicas: 2</stored>"
+    colorize_code drift-header
+
+Built-in tags are overridden the same way. Set before loading the library, a
+variable keeps its value, as the defaults only fill in what is unset or empty;
+aliases such as `magenta` follow `purple` only when `purple` is set before
+loading. Set after loading, it applies from the next call on.
+
+A value without a leading `0;` adds to the surrounding color, as the text
+attributes do; the built-in colors start with `0;` and replace it. A tag name
+that has no variable resets the colors, without an error.
+
 ## Limitations
 
 The test suite runs with [Bash](http://www.gnu.org/software/bash/) 3.2, 4.4
