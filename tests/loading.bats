@@ -114,32 +114,16 @@ colorize -s '<red>x</red>'"
   assert_output "$(printf '^[[0;31mx^[[0m\n\\[^[[0;31m\\]x\\[^[[0m\\]\nx')"
 }
 
-# Bug todo 01m3vjvakkc14se0106bstkvma: compatibility.sh reads BASH_VERSION
-# without a default, which is unset in zsh and ash. zsh stops reading
-# compatibility.sh but goes on with colorizer.sh, so colorize runs without
-# the ARRAY_* functions; ash ends the script.
-@test "set -u before loading: works in bash, breaks colorize in zsh, ends ash" {
+# compatibility.sh tests BASH_VERSION and ZSH_VERSION, of which at least
+# one is unset in every shell.
+@test "set -u before loading works in every shell" {
   run run_script_in_test_shell "set -u
 COLORIZE_SH_SOURCE_DIR='${LIBRARY_DIR}'
 . \"\${COLORIZE_SH_SOURCE_DIR}/colorizer.sh\"
 colorize '<red>x</red>'"
 
-  case "$(test_shell_kind)" in
-    bash)
-      assert_status 0
-      assert_output '^[[0;31mx^[[0m'
-      ;;
-    zsh)
-      assert_status 0
-      [[ "${output}" == *"BASH_VERSION: parameter not set"* ]]
-      [[ "${output}" == *"command not found: ARRAY_define"* ]]
-      [[ "${output}" == *"Mismatching colorize tag nesting at <>...</red>" ]]
-      ;;
-    ash)
-      [ "${status}" -ne 0 ]
-      [[ "${output}" == *"BASH_VERSION: parameter not set" ]]
-      ;;
-  esac
+  assert_status 0
+  assert_output '^[[0;31mx^[[0m'
 }
 
 # Bug todo 01m3vjvakjz2b1z1rn3d13tqdc: bash does not expand aliases in
