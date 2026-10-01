@@ -45,7 +45,10 @@ one, which fails in zsh 5.9.2 today and passes in bash 5.3.20 and 3.2.57
 ## Proposal (input, not decided)
 
 Return the result with `printf '%s\n' "${result}"` on line 151, so only
-`colorize`'s own `echo -e` interprets. The parser rewrite
+`colorize`'s own `echo -e` interprets. Bug `01m3vjf7nwsj3jd7vmc4e5wb1d`
+(text that is an `echo` option is lost) proposes replacing all three
+`echo` calls with `printf`; tried temporarily on 2026-10-01, that change
+also makes this bug's test pass in zsh 5.9.2. The parser rewrite
 (`01m3vfmxyb4fxzzgvq1wyw1jt5`) returns the result in a variable, which
 removes the first `echo` entirely.
 

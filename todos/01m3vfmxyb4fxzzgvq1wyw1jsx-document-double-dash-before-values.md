@@ -15,6 +15,15 @@
 `colorize -- "-n is text"` prints `-n is text`. Checked with bash 5.3.20
 and 3.2.57. The README does not mention it.
 
+`--` is not enough for text that is exactly an `echo` option (`-n`, `-e`,
+`-E`, `-neE`, ...): `colorize -- "-n"` prints an empty line. That is bug
+`01m3vjf7nwsj3jd7vmc4e5wb1d`; the README should only promise what `--`
+covers until it is fixed.
+
+Tests: `tests/options.bats` ("text that is an option is taken as one",
+"-- ends the options", "an invalid option prints a message and ends the
+calling script with 42").
+
 ## Proposal (input, not decided)
 
 - README: a short section saying that text from variables should follow
