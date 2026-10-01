@@ -84,3 +84,32 @@ assert_tag_code() {
 @test "tag names are case sensitive" {
   assert_tag_code RED ""
 }
+
+@test "attribute tags" {
+  assert_tag_code bold "1"
+  assert_tag_code dim "2"
+  assert_tag_code italic "3"
+  assert_tag_code underline "4"
+  assert_tag_code double-underline "4:2"
+  assert_tag_code reverse "7"
+  assert_tag_code strike "9"
+}
+
+@test "bright foreground tags use the bright colours, not bold" {
+  assert_tag_code bright-black "90"
+  assert_tag_code bright-red "91"
+  assert_tag_code bright-green "92"
+  assert_tag_code bright-yellow "93"
+  assert_tag_code bright-blue "94"
+  assert_tag_code bright-purple "95"
+  assert_tag_code bright-magenta "95"
+  assert_tag_code bright-cyan "96"
+  assert_tag_code bright-white "97"
+}
+
+@test "an attribute inside a colour adds to it" {
+  run colorize_in_test_shell '<red>a<bold>b</bold>c</red>'
+
+  assert_status 0
+  assert_output '^[[0;31ma^[[1mb^[[0;31mc^[[0m'
+}

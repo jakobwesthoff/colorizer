@@ -73,6 +73,30 @@ COLORIZER_bg_light_gray=${COLORIZER_bg_light_gray:="0;30;47"}
 COLORIZER_bg_black=${COLORIZER_bg_black:="0;37;40"}
 COLORIZER_bg_white=${COLORIZER_bg_white:="0;30;107"}
 
+# Bright colors, from the terminal's bright palette. The light_* colors above
+# are bold plus the normal color, which looks like the normal color in
+# terminals that do not render bold.
+COLORIZER_bright_black=${COLORIZER_bright_black:="90"}
+COLORIZER_bright_red=${COLORIZER_bright_red:="91"}
+COLORIZER_bright_green=${COLORIZER_bright_green:="92"}
+COLORIZER_bright_yellow=${COLORIZER_bright_yellow:="93"}
+COLORIZER_bright_blue=${COLORIZER_bright_blue:="94"}
+COLORIZER_bright_purple=${COLORIZER_bright_purple:="95"}
+COLORIZER_bright_magenta=${COLORIZER_bright_magenta:="${COLORIZER_bright_purple}"}
+COLORIZER_bright_cyan=${COLORIZER_bright_cyan:="96"}
+COLORIZER_bright_white=${COLORIZER_bright_white:="97"}
+
+# Text attributes. Without a leading reset, so an attribute inside a color
+# keeps the color. `4:2` is a double underline; terminals without it show a
+# single one.
+COLORIZER_bold=${COLORIZER_bold:="1"}
+COLORIZER_dim=${COLORIZER_dim:="2"}
+COLORIZER_italic=${COLORIZER_italic:="3"}
+COLORIZER_underline=${COLORIZER_underline:="4"}
+COLORIZER_double_underline=${COLORIZER_double_underline:="4:2"}
+COLORIZER_reverse=${COLORIZER_reverse:="7"}
+COLORIZER_strike=${COLORIZER_strike:="9"}
+
 ##
 # Parse the input and return the ansi code output processed output
 #

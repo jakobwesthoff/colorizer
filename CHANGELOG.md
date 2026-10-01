@@ -38,5 +38,9 @@
 
 ### Added
 
+- Text attribute tags: `bold`, `dim`, `italic`, `underline`,
+  `double-underline`, `reverse` and `strike`.
+- Bright color tags (`bright-red`, … `bright-black`), which use the terminal's
+  bright colors instead of bold.
 - A test suite (bats, run through just) for bash, zsh and busybox ash, on the
   host and in Docker for bash 3.2, 4.4 and 5.2.

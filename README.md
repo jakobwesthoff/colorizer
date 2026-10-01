@@ -91,8 +91,9 @@ containing the `colorize.sh` file.
 ## Available Color-Tags
 
 Currently all *16* default ANSI terminal foreground colors plus all *16* background
-colors are supported. Maybe support for the extended 256 colors modern terminals
-are capable of displaying will be added in the future.
+colors are supported, as well as the bright colors and the common text
+attributes. Maybe support for the extended 256 colors modern terminals are
+capable of displaying will be added in the future.
 
 ### Foreground Colors
 
@@ -141,6 +142,43 @@ Color Tag                                                  | Generated ANSI Code
 &lt;**bg-light-gray**&gt;…&lt;/bg-light-gray&gt;           | \033[0;30;47m
 &lt;**bg-white**&gt;…&lt;/bg-white&gt;                     | \033[0;30;107m
 &lt;**bg-black**&gt;…&lt;/bg-black&gt;                     | \033[0;37;40m
+
+### Bright Colors
+
+The `light-*` tags are bold plus the normal color, which looks like the normal
+color in terminals that do not render bold. The `bright-*` tags use the
+terminal's bright colors instead:
+
+Color Tag                                          | Generated ANSI Code
+-------------------------------------------------- | -------------------
+&lt;**bright-red**&gt;…&lt;/bright-red&gt;         | \033[91m
+&lt;**bright-green**&gt;…&lt;/bright-green&gt;     | \033[92m
+&lt;**bright-yellow**&gt;…&lt;/bright-yellow&gt;   | \033[93m
+&lt;**bright-blue**&gt;…&lt;/bright-blue&gt;       | \033[94m
+&lt;**bright-purple**&gt;…&lt;/bright-purple&gt;   | \033[95m
+&lt;**bright-cyan**&gt;…&lt;/bright-cyan&gt;       | \033[96m
+&lt;**bright-white**&gt;…&lt;/bright-white&gt;     | \033[97m
+&lt;**bright-black**&gt;…&lt;/bright-black&gt;     | \033[90m
+
+`bright-magenta` is an alias for `bright-purple`, as `magenta`, `light-magenta`
+and `bg-magenta` are for the `purple` tags.
+
+### Text Attributes
+
+Attributes do not reset the color, so they can be nested inside a color tag:
+`<red>a <bold>bold</bold> word</red>`.
+
+Tag                                                        | Generated ANSI Code
+---------------------------------------------------------- | -------------------
+&lt;**bold**&gt;…&lt;/bold&gt;                             | \033[1m
+&lt;**dim**&gt;…&lt;/dim&gt;                               | \033[2m
+&lt;**italic**&gt;…&lt;/italic&gt;                         | \033[3m
+&lt;**underline**&gt;…&lt;/underline&gt;                   | \033[4m
+&lt;**double-underline**&gt;…&lt;/double-underline&gt;     | \033[4:2m
+&lt;**reverse**&gt;…&lt;/reverse&gt;                       | \033[7m
+&lt;**strike**&gt;…&lt;/strike&gt;                         | \033[9m
+
+Terminals without double underline show a single one.
 
 ## Limitations
 

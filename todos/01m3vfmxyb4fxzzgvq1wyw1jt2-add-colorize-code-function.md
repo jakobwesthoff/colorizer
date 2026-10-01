@@ -43,7 +43,8 @@ New function.
 
 ## Related
 
-- Attribute tags to combine: `01m3vfmxyb4fxzzgvq1wyw1jsz`.
+- Attribute tags to combine are in the palette (`bold`, `italic`,
+  `double-underline`, ...).
 - Defining semantic roles as custom tags: `01m3vfmxyb4fxzzgvq1wyw1jsy`.
 
 ## For k8s:drift
