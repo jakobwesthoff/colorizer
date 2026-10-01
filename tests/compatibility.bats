@@ -66,18 +66,12 @@ ARRAY_push list "cost \$HOME"; ARRAY_peek list'
   esac
 }
 
-# Bug todo 01m3vk1qb40aghhdk8ngs7yz5s: bash and zsh count by testing whether
-# the array expands to an empty string.
-@test "counting empty values: wrong in bash and zsh" {
+@test "count includes empty values" {
   run in_test_shell 'ARRAY_define list; ARRAY_push list ""; ARRAY_count list
 ARRAY_push list "two"; ARRAY_count list'
 
   assert_status 0
-  case "$(test_shell_kind)" in
-    bash) assert_output "$(printf '0\n0')" ;;
-    zsh) assert_output "$(printf '0\n2')" ;;
-    ash) assert_output "$(printf '1\n2')" ;;
-  esac
+  assert_output "$(printf '1\n2')"
 }
 
 @test "peek and pop on an empty array print nothing and report no error" {

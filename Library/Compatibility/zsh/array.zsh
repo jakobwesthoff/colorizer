@@ -50,11 +50,9 @@ ARRAY_define() {
 ARRAY_count() {
     local name="${1}"
 
-    if [ -z "$(eval "echo \"\${${name}}\"")" ]; then
-        echo "0"
-    else
-        eval "echo \"\${#${name}[@]}\""
-    fi
+    # `set +u` lets an array that was never defined count as empty under a
+    # caller's `set -u`; empty values still count as elements.
+    (set +u; eval "echo \"\${#${name}[@]}\"")
 }
 
 ##
