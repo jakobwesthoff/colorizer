@@ -194,10 +194,15 @@ colorize() {
 
     local processed_message="$(COLORIZER_process_input "${prompt_option}" "${strip_option}" "${@}")"
 
+    # `%b` interprets backslash sequences as `echo -e` does, but never takes
+    # the text for an option of its own, as `echo` does with `-n` or `-e`.
+    # Unlike `echo -e`, bash's printf warns about sequences it cannot
+    # complete, such as `\u` in a bash prompt string; it prints them as they
+    # are either way, so the warning is dropped.
     if [ "${newline_option}" = "SET" ]; then
-        echo -en "${processed_message}"
+        printf '%b' "${processed_message}" 2> /dev/null
     else
-        echo -e "${processed_message}"
+        printf '%b\n' "${processed_message}" 2> /dev/null
     fi
 }
 

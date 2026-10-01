@@ -92,22 +92,13 @@ setup_file() {
   assert_output ''
 }
 
-# Bug todo 01m3vjf7nwsj3jd7vmc4e5wb1d, which has the test for the fixed
-# behaviour: colorize's `echo -e` takes such text as its own option.
-@test "text that is an echo option is lost, even after --" {
+@test "text that is an echo option is printed after --" {
   local text
-  for text in -n -neE; do
+  for text in -n -e -E -neE; do
     run colorize_in_test_shell_showing_line_ends -- "${text}"
 
     assert_status 0
-    assert_output ''
-  done
-
-  for text in -e -E; do
-    run colorize_in_test_shell_showing_line_ends -- "${text}"
-
-    assert_status 0
-    assert_output '$'
+    assert_output "${text}\$"
   done
 }
 

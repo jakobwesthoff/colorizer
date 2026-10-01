@@ -2,8 +2,8 @@
 
 **Priority:** 6 of 11 in the modernize series (cost/effectiveness order)
 
-`colorize` prints with `echo -e` / `echo -en` (`colorizer.sh:191` and
-193), so backslash sequences in the text are interpreted. `\n` and `\t`
+`colorize` prints with `printf '%b'`, so backslash sequences in the text
+are interpreted as `echo -e` would. `\n` and `\t`
 become control characters, and `\c` ends the output:
 
 ```
@@ -21,11 +21,11 @@ message), so it cannot simply be switched off.
 ## Proposal (input, not decided)
 
 A new option `-r`: print the processed text with `printf '%s'` instead of
-`echo -e`, so only the tags and entities are processed. With `-n` it omits
+`printf '%b'`, so only the tags and entities are processed. With `-n` it omits
 the newline as before. `-r` is free in `getopts ":nps"`.
 
 The escape codes themselves are built from `COLORIZER_START` (`\033[`),
-which relies on the `-e` interpretation. With `-r` the start sequence has
+which relies on the `%b` interpretation. With `-r` the start sequence has
 to be the real escape character, for example `printf '%b'` applied to
 `COLORIZER_START` once when building the code, not to the text.
 
