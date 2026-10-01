@@ -1,6 +1,6 @@
 # Add a filter mode that colours markup read from stdin
 
-**Priority:** 10 of 10 in the modernize series (cost/effectiveness for
+**Priority:** 6 of 6 in the modernize series (cost/effectiveness for
 k8s:drift, re-evaluated 2026-10-01)
 
 `colorize` takes its text as arguments, one call per message. A program
@@ -47,15 +47,17 @@ New option.
 Two ways k8s:drift can use colorizer (re-evaluated 2026-10-01):
 
 - **Path A**: drift keeps rendering in jq and takes the escape codes from
-  colorizer instead of writing them itself. Todos 1 to 4 of this series.
+  colorizer instead of writing them itself. Everything it needs is in
+  place: attribute and bright tags, `colorize_code`, custom tags as themes,
+  and `COLORIZER_MODE`/`colorize_detect`.
 - **Path B**: drift's jq program emits colorizer markup and colorize
-  prints it. Todos 6 to 10 of this series, all of them needed together.
+  prints it. Todos 2 to 6 of this series, all of them needed together.
 
 Path A removes drift's own colour code without touching its renderer. Path
 B would also take the escape codes out of the renderer. Which path drift
 takes is not decided.
 
-This todo is the core of path B, and depends on todos 6 to 9.
+This todo is the core of path B, and depends on todos 2 to 5.
 
 ## Decision
 
