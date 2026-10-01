@@ -9,7 +9,7 @@ error:
 | Input | bash 5.3.20, 3.2.57, busybox ash | zsh 5.9.2 |
 |---|---|---|
 | `<red >x</red >` | empty line, `bad substitution` on stderr | `ESC[mxESC[0m` (like an undefined tag), `bad substitution` on stderr |
-| `a < b` | empty line, `bad substitution` on stderr | loops forever (bug `01m3vjjpv54172b98ekcekpfj4`) |
+| `a < b > c` | empty line, `bad substitution` on stderr | `Could not find closing tag for < b >`, `bad substitution` on stderr |
 
 The whole text is lost, not only the tag.
 
@@ -28,9 +28,9 @@ a command).
 
 ## Test that detects it
 
-`tests/errors.bats` pins today's behaviour ("a tag name with a space", and
-the bash/ash branch of "a < followed by a space"). Once fixed, replace
-those with this one, which fails today in all four shells:
+`tests/errors.bats` pins today's behaviour ("a tag name with a space").
+Once fixed, replace that test with this one, which fails today in all four
+shells:
 
 ```bash
 @test "a tag name that is not a variable name keeps the text and the shell quiet" {

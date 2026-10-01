@@ -98,6 +98,15 @@ COLORIZER_process_input() {
     while [ "${processed#*<}" != "${processed}" ]; do
         # Isolate first tag in stream
         pseudoTag="${processed#*<}"
+
+        # A `<` with no `>` after it cannot start a tag, so the rest of the
+        # text, from that `<` on, is plain text. Cutting up to the next `>`
+        # would find none and never move on.
+        if [ "${pseudoTag#*>}" = "${pseudoTag}" ]; then
+            result="${result}<${pseudoTag}"
+            break
+        fi
+
         pseudoTag="${pseudoTag%%>*}"
 
         # Push/Pop tag to/from stack

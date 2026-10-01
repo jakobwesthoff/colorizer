@@ -73,30 +73,24 @@ colorize \"\$1\"" colorizer-test "${1}"
   esac
 }
 
-# Bug todo 01m3vjjpv54172b98ekcekpfj4: without a `>` after it, the parser
-# never moves past the `<`.
-@test "a < with no > after it loops forever" {
+# Without a `>` after it, a `<` cannot start a tag; the rest of the text is
+# printed as it is.
+@test "a < with no > after it is printed as text" {
   run colorize_with_time_limit 'a<b'
 
-  assert_status 124
-}
+  assert_status 0
+  assert_output 'a<b'
 
-# Bug todos 01m3vjjpv54172b98ekcekpfj4 and 01m3vjjpv54172b98ekcekpfj5: in
-# bash and ash the syntax error ends the parser's subshell before it loops;
-# zsh reports the error and goes on looping.
-@test "a < followed by a space: an empty line in bash and ash, a loop in zsh" {
   run --separate-stderr colorize_with_time_limit 'a < b'
 
-  case "$(test_shell_kind)" in
-    zsh)
-      assert_status 124
-      ;;
-    *)
-      assert_status 0
-      assert_output ''
-      [[ "${stderr}" == *"bad substitution"* ]]
-      ;;
-  esac
+  assert_status 0
+  assert_output 'a < b'
+  [ -z "${stderr}" ]
+
+  run colorize_with_time_limit '<red>x</red> if 1 < 2'
+
+  assert_status 0
+  assert_output $'\e[0;31mx\e[0m if 1 < 2'
 }
 
 # Bug todo 01m3vjjpv54172b98ekcekpfj6: the palette lookup evaluates

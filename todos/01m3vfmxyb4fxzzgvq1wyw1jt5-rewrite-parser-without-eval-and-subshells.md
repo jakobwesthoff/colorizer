@@ -9,13 +9,12 @@ called through `$(...)`.
 
 ## Problems
 
-- **Input reaches `eval`.** The palette lookup (`colorizer.sh:118` and
-  124) and `ARRAY_push` (bash, zsh and default layers) evaluate tag text.
-  `colorize "value <x:-\$(echo INJECTED)>text</x:-\$(echo INJECTED)>"`
-  ran the command substitution. Callers that escape their text are safe
+- **Input reaches `eval`.** The palette lookups evaluate tag text; in zsh
+  the tag `x:-$(cmd)` runs `cmd` (bug `01m3vjjpv54172b98ekcekpfj6`).
+  Callers that escape their text are safe
   (`01m3vfmxyb4fxzzgvq1wyw1jt0`); callers that do not are not.
-- **A lone `<` empties the output.** `colorize "a < b"`: `bad substitution`
-  on stderr, empty line.
+- **A `<` before a later `>` empties the output.** `colorize "a < b > c"`:
+  `bad substitution` on stderr, empty line, in bash and ash.
 - **Errors replace the text.** A mismatched or unclosed tag runs `echo` of
   the error and `exit 42` inside `$(COLORIZER_process_input ...)`
   (line 188). The subshell exits, `local` masks the status, and `colorize`

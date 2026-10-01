@@ -9,13 +9,11 @@ cannot be passed through `colorize` safely today:
   is no `&amp;`, so a literal `&lt;` cannot be written at all.
 - There is no helper to escape a value; callers must know to replace
   `<` and `>` themselves.
-- Unescaped `<` breaks the output: `colorize "a < b"` prints
-  `line 118: ${COLORIZER_ b}: bad substitution` on stderr and an empty
-  line.
-- Unescaped text that looks like a tag reaches `eval`. With
-  `colorize "value <x:-\$(echo INJECTED)>text</x:-\$(echo INJECTED)>"`
-  the command substitution ran (the error message showed the stack entry
-  `x:-INJECTED`). Checked with bash 5.3.20.
+- An unescaped `<` with a `>` somewhere after it breaks the output:
+  `colorize "a < b > c"` prints a `bad substitution` error on stderr and
+  an empty line in bash and ash (bug `01m3vjjpv54172b98ekcekpfj5`).
+- Unescaped text that looks like a tag reaches `eval`: in zsh, the tag
+  `x:-$(cmd)` runs `cmd` (bug `01m3vjjpv54172b98ekcekpfj6`).
 
 ekkocli's `k8s:drift` prints cluster values and could not use `colorize`
 for its lines for these reasons.
