@@ -38,10 +38,11 @@ setup_file() {
 }
 
 @test "-s still checks the nesting" {
-  run colorize_in_test_shell -s '<red>x</green>'
+  run --separate-stderr colorize_in_test_shell -s '<red>x</green>'
 
   assert_status 42
-  assert_output 'Mismatching colorize tag nesting at <red>...</green>'
+  assert_output 'x'
+  [ "${stderr}" = 'Mismatching colorize tag nesting at <red>...</green>' ]
 }
 
 @test "-s wins over -p" {

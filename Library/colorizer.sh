@@ -75,11 +75,22 @@ COLORIZER_bg_white=${COLORIZER_bg_white:="0;30;107"}
 
 ##
 # Parse the input and return the ansi code output processed output
+#
+# Malformed markup is reported on stderr, and the function exits with 42
+# (it runs in a subshell). In lenient mode the nesting is not checked at all,
+# which together with the strip option gives the bare text of input that
+# failed the check.
+#
+# @param prompt_option SET to escape ansi for prompt usage
+# @param strip_option SET to remove the tags instead of replacing them
+# @param lenient_option SET to skip the nesting check; only with strip_option
+# @param [string,...]
 ##
 COLORIZER_process_input() {
     local prompt_option="${1}"
     local strip_option="${2}"
-    shift 2
+    local lenient_option="${3}"
+    shift 3
     local processed="${*}"
     local pseudoTag=""
     local parentTag=""
@@ -121,15 +132,17 @@ COLORIZER_process_input() {
                 ;;
         esac
 
-        # Push/Pop tag to/from stack
-        if [ "${pseudoTag:0:1}" != "/" ]; then
-            ARRAY_push "stack" "${pseudoTag}"
-        else
-            if [ "${pseudoTag:1}" != "$(ARRAY_peek "stack")" ]; then
-                echo "Mismatching colorize tag nesting at <$(ARRAY_peek "stack")>...<${pseudoTag}>"
-                exit 42
+        # Push/Pop tag to/from stack, unless the nesting is not checked
+        if [ -z "${lenient_option}" ]; then
+            if [ "${pseudoTag:0:1}" != "/" ]; then
+                ARRAY_push "stack" "${pseudoTag}"
+            else
+                if [ "${pseudoTag:1}" != "$(ARRAY_peek "stack")" ]; then
+                    echo "Mismatching colorize tag nesting at <$(ARRAY_peek "stack")>...<${pseudoTag}>" >&2
+                    exit 42
+                fi
+                ARRAY_pop "stack" >/dev/null
             fi
-            ARRAY_pop "stack" >/dev/null
         fi
 
         # Apply ansi formatting
@@ -167,7 +180,7 @@ COLORIZER_process_input() {
     done
 
     if [ "$(ARRAY_count "stack")" -ne 0 ]; then
-        echo "Could not find closing tag for <$(ARRAY_peek "stack")>"
+        echo "Could not find closing tag for <$(ARRAY_peek "stack")>" >&2
         exit 42
     fi
 
@@ -188,8 +201,9 @@ COLORIZER_process_input() {
 # printf '%b' is used for output, which interprets backslash sequences like
 # echo -e.
 #
-# For malformed markup, the error message is printed instead of the text and
-# the status is 42.
+# For malformed markup, the error message goes to stderr, the text is printed
+# without its tags, and the status is 42. An invalid option is reported on
+# stderr with status 42 as well.
 #
 # The -n option may be specified, which will behave exactly like echo -n, aka
 # omitting the newline.
@@ -220,11 +234,16 @@ colorize() {
     shift $((OPTIND-1))
 
     # Declared apart from the assignment, as `local` would replace the
-    # parser's status with its own. The parser reports malformed markup by
-    # printing the message as its result and exiting with 42.
+    # parser's status with its own.
     local processed_message
-    processed_message="$(COLORIZER_process_input "${prompt_option}" "${strip_option}" "${@}")"
+    processed_message="$(COLORIZER_process_input "${prompt_option}" "${strip_option}" "" "${@}")"
     local process_status="${?}"
+
+    # The parser has reported malformed markup on stderr. The text is still
+    # printed, without any tags, so captured output stays readable.
+    if [ "${process_status}" -ne 0 ]; then
+        processed_message="$(COLORIZER_process_input "" "SET" "SET" "${@}")"
+    fi
 
     # `%b` interprets backslash sequences as `echo -e` does, but never takes
     # the text for an option of its own, as `echo` does with `-n` or `-e`.

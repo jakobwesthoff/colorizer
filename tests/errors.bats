@@ -21,34 +21,53 @@ colorize_with_time_limit() {
 colorize \"\$1\"" colorizer-test "${1}"
 }
 
-@test "a mismatched closing tag prints a message instead and returns 42" {
-  run colorize_in_test_shell '<red>x</green>'
+# Malformed markup is reported on stderr with status 42; stdout gets the text
+# with the tags removed, so captured output stays readable.
+@test "a mismatched closing tag: message on stderr, the bare text, status 42" {
+  run --separate-stderr colorize_in_test_shell '<red>x</green>'
 
   assert_status 42
-  assert_output 'Mismatching colorize tag nesting at <red>...</green>'
+  assert_output 'x'
+  [ "${stderr}" = 'Mismatching colorize tag nesting at <red>...</green>' ]
 }
 
-@test "an unclosed tag prints a message instead and returns 42" {
-  run colorize_in_test_shell '<red><blue>x</blue>'
+@test "an unclosed tag: message on stderr, the bare text, status 42" {
+  run --separate-stderr colorize_in_test_shell '<red><blue>x</blue>'
 
   assert_status 42
-  assert_output 'Could not find closing tag for <red>'
+  assert_output 'x'
+  [ "${stderr}" = 'Could not find closing tag for <red>' ]
+}
+
+@test "a closing tag without an opening one: message on stderr, the bare text, status 42" {
+  run --separate-stderr colorize_in_test_shell 'x</red>'
+
+  assert_status 42
+  assert_output 'x'
+  [ "${stderr}" = 'Mismatching colorize tag nesting at <>...</red>' ]
+}
+
+@test "the bare text keeps entities decoded and invalid tag names as text" {
+  run --separate-stderr colorize_in_test_shell '<red>1 &lt; 2 <a b> <blue>c</blue>'
+
+  assert_status 42
+  assert_output '1 < 2 <a b> c'
+}
+
+@test "the bare text follows -n" {
+  run --separate-stderr colorize_in_test_shell_showing_line_ends -n '<red>x'
+
+  assert_status 42
+  assert_output 'x'
 }
 
 # colorize returns the status instead of exiting, so a calling script, or an
 # interactive shell that loaded the library, goes on.
 @test "malformed markup does not end the calling script" {
-  run in_test_shell 'colorize "<red>x"; echo "colorize returned $?, still running"'
+  run --separate-stderr in_test_shell 'colorize "<red>x"; echo "colorize returned $?, still running"'
 
   assert_status 0
-  assert_output "$(printf 'Could not find closing tag for <red>\ncolorize returned 42, still running')"
-}
-
-@test "a closing tag without an opening one is reported cleanly" {
-  run --separate-stderr colorize_in_test_shell 'x</red>'
-
-  [ -z "${stderr}" ]
-  assert_output 'Mismatching colorize tag nesting at <>...</red>'
+  assert_output "$(printf 'x\ncolorize returned 42, still running')"
 }
 
 @test "an empty tag is printed as text" {
