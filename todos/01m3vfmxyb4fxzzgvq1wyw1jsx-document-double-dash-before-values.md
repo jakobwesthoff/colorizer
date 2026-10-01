@@ -3,9 +3,9 @@
 **Priority:** 2 of 11 in the modernize series (cost/effectiveness order)
 
 `colorize` parses its arguments with `getopts ":nps"`
-(`colorizer.sh:178`), so text starting with `-` is taken as options:
+(`colorizer.sh:210`), so text starting with `-` is taken as options:
 
-- An unknown option runs `exit 42` (line 183) in the caller's shell, not
+- An unknown option runs `exit 42` (line 215) in the caller's shell, not
   in a subshell, so the calling script ends.
   `colorize "-x is a flag"; echo after` prints
   `Invalid option (-x) given to colorize` and never reaches `echo`.

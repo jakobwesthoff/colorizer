@@ -16,7 +16,7 @@ called through `$(...)`.
   parser print the error as its result and exit 42 from its subshell;
   `colorize` prints that message as the line and returns 42.
 - **Invalid option ends the caller.** `exit 42` in the `getopts` loop
-  (line 183) runs in the caller's shell.
+  (line 215) runs in the caller's shell.
 - **Speed.** Every closing tag costs several subshells (`$(ARRAY_peek)`
   twice, `$(ARRAY_count)`), plus one per call for the result and one for
   the final count. 300 lines with three tags each took 2.35 to 2.47 s

@@ -1,9 +1,8 @@
 #!/usr/bin/env bats
 
 # Malformed markup: mismatched, unclosed and stray tags, tag names that are
-# not valid variable names, a `<` that never closes, and tag text that the
-# library evaluates. Most of these are bugs; each test names its todo, which
-# has the test for the fixed behaviour.
+# not valid variable names, a `<` that never closes, and tag text that must
+# never run as code.
 
 load helpers/colorize
 

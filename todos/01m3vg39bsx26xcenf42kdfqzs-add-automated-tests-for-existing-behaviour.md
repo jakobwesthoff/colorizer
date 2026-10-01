@@ -70,12 +70,13 @@ versions, with all running logic in a `justfile`.
 
 ## State
 
-The coverage list above is done: 93 tests in `tests/` (smoke, tags, text,
+The coverage list above is done: 90 tests in `tests/` (smoke, tags, text,
 nesting, options, errors, palette, loading, compatibility), passing on
 2026-10-01 on the host (Homebrew bash 5.3.20, macOS bash 3.2.57, zsh
 5.9.2) and in all nine Docker combinations.
 
-Bug todos written while building the suite, each with its detecting test:
+Bug todos written while building the suite, each fixed test-first since
+(its detecting test replaced the test that pinned the bug):
 
 - `01m3vfmxyb4fxzzgvq1wyw1jsw` dashed parent tag not restored (fixed)
 - `01m3vj6swnh7hhb76kzx9x91pe` zsh interprets backslashes twice (fixed)
@@ -91,6 +92,8 @@ Bug todos written while building the suite, each with its detecting test:
 - `01m3vk1qb40aghhdk8ngs7yz5s` `ARRAY_count` ignores empty values (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5t` peek and pop on an empty array (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5v` bash `ARRAY_unset` leaves a hole (fixed)
+- found while fixing, no todo: the default layer's `ARRAY_count` failed
+  under `set -u` for an array that was never defined (fixed)
 
 ## Open
 

@@ -3,7 +3,7 @@
 **Priority:** 3 of 11 in the modernize series (cost/effectiveness order)
 
 Every tag is looked up as the variable `COLORIZER_<name>`, with `-`
-turned into `_` (`colorizer.sh:115` and 118). So any variable a caller
+turned into `_` (`colorizer.sh:137` and 140). So any variable a caller
 sets becomes a tag, including codes the palette lacks:
 
 ```bash
@@ -27,8 +27,8 @@ README section "Custom tags and themes":
   `_` in the variable.
 - The value is the SGR parameter list without `ESC[` and `m`.
 - Built-in colours can be overridden the same way.
-- A note that tag names should be plain identifiers (see the parser
-  rewrite todo for why other characters are unsafe today).
+- Tag names are letters, digits, `_` and `-`; anything else between `<`
+  and `>` is printed as text.
 - What happens with an undefined tag: it emits `ESC[m`, a full reset, and
   no error.
 

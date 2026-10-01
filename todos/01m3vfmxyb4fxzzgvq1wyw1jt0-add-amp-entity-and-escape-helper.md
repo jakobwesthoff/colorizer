@@ -5,7 +5,7 @@
 Text from outside the script (command output, cluster values, user input)
 cannot be passed through `colorize` safely today:
 
-- Only `&lt;` and `&gt;` are decoded (`colorizer.sh:149` and 150). There
+- Only `&lt;` and `&gt;` are decoded (`colorizer.sh:174` and 175). There
   is no `&amp;`, so a literal `&lt;` cannot be written at all.
 - There is no helper to escape a value; callers must know to replace
   `<` and `>` themselves.
@@ -51,7 +51,7 @@ the parser.
 contains a literal `&amp;` today (printed as `&amp;`, then as `&`). Assumed
 rare; to be named in the changelog. Shells other than bash and zsh need
 checking for `${var//pattern/replacement}`; the README claims busybox ash
-works, and the existing code on lines 149 and 150 already uses that
+works, and the existing code on lines 174 and 175 already uses that
 expansion.
 
 ## Related

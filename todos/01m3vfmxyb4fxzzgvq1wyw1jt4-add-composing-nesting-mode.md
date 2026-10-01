@@ -4,7 +4,7 @@
 
 Nested tags replace each other instead of combining. Every built-in palette
 value starts with `0;` (a full reset), and closing a tag re-emits only the
-parent's code (`colorizer.sh:121` to 125). Observed:
+parent's code (`colorizer.sh:142` to 150). Observed:
 
 ```
 COLORIZER_bold=1
