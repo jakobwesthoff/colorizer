@@ -42,7 +42,26 @@ parent="$(ARRAY_peek "stack")"
 eval "ansiToken=\"\${COLORIZER_${parent//-/_}}\""
 ```
 
-Add a test (or README example) with a dashed parent and a nested tag.
+## Test that detects it
+
+`tests/nesting.bats` pins today's output ("closing a tag inside a dashed
+parent emits the rest of the parent's name"). Once fixed, replace that test
+with this one. It fails today in bash 5.3.20, bash 3.2.57 and zsh 5.9.2, and
+passes in all three with the fix above applied:
+
+```bash
+@test "closing a nested tag restores a dashed parent" {
+  run colorize_in_test_shell '<light-red>a<blue>b</blue>c</light-red>'
+
+  assert_status 0
+  assert_output '^[[1;31ma^[[0;34mb^[[1;31mc^[[0m'
+
+  run colorize_in_test_shell '<bg-light-red>a<blue>b</blue>c</bg-light-red>'
+
+  assert_status 0
+  assert_output '^[[0;30;101ma^[[0;34mb^[[0;30;101mc^[[0m'
+}
+```
 
 ## Backwards compatibility
 
