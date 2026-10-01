@@ -46,6 +46,24 @@ New function.
 - Attribute tags to combine: `01m3vfmxyb4fxzzgvq1wyw1jsz`.
 - Defining semantic roles as custom tags: `01m3vfmxyb4fxzzgvq1wyw1jsy`.
 
+## For k8s:drift
+
+Two ways k8s:drift can use colorizer (re-evaluated 2026-10-01):
+
+- **Path A**: drift keeps rendering in jq and takes the escape codes from
+  colorizer instead of writing them itself. Todos 1 to 4 of this series.
+- **Path B**: drift's jq program emits colorizer markup and colorize
+  prints it. Todos 6 to 10 of this series, all of them needed together.
+
+Path A removes drift's own colour code without touching its renderer. Path
+B would also take the escape codes out of the renderer. Which path drift
+takes is not decided.
+
+This todo is the main step of path A: `_ekko_drift_colors_json` can build
+its JSON from `colorize_code` calls, and `_ekko_drift_color_code` goes away.
+The jq renderer (`drift_line` and friends in `libdrift.jq`, which read
+`$colors`) stays as it is.
+
 ## Decision
 
 _Not yet established._

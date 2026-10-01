@@ -40,6 +40,22 @@ New option; the default output is unchanged.
 - The parser rewrite returns the result in a variable, which makes this
   a choice of print command only: `01m3vfmxyb4fxzzgvq1wyw1jt5`.
 
+## For k8s:drift
+
+Two ways k8s:drift can use colorizer (re-evaluated 2026-10-01):
+
+- **Path A**: drift keeps rendering in jq and takes the escape codes from
+  colorizer instead of writing them itself. Todos 1 to 4 of this series.
+- **Path B**: drift's jq program emits colorizer markup and colorize
+  prints it. Todos 6 to 10 of this series, all of them needed together.
+
+Path A removes drift's own colour code without touching its renderer. Path
+B would also take the escape codes out of the renderer. Which path drift
+takes is not decided.
+
+This todo is path B: cluster values contain backslashes, which colorize
+would interpret. On path A no value reaches colorize.
+
 ## Decision
 
 _Not yet established._
