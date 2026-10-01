@@ -13,6 +13,9 @@ bats_require_minimum_version 1.5.0
 
 LIBRARY_DIR="$(cd "${BATS_TEST_DIRNAME}/../Library" && pwd)"
 
+# CPU seconds any process of the shell under test may use (see library_loader)
+TEST_CPU_SECONDS=10
+
 ###
 # Fail the run when TEST_SHELL is unset or not installed, so a missing shell
 # shows up as an error instead of a run against some other shell
@@ -51,9 +54,15 @@ test_shell_kind() {
 # fallback for shells other than bash and zsh, which busybox ash takes, finds
 # its files only through it. Loading without it is tested in loading.bats.
 # The path is single-quoted, so it must not contain a single quote.
+#
+# Some inputs make colorize loop forever, inside a `$(...)` subshell that
+# outlives its parent when only the parent is killed. The CPU-time limit is
+# inherited by every child, so such a loop ends on its own (SIGXCPU) even when
+# nothing is left to kill it. No test needs more than a fraction of a second.
 ###
 library_loader() {
-  printf "COLORIZE_SH_SOURCE_DIR='%s'\n. \"\${COLORIZE_SH_SOURCE_DIR}/colorizer.sh\"\n" "${LIBRARY_DIR}"
+  printf "ulimit -t %s\nCOLORIZE_SH_SOURCE_DIR='%s'\n. \"\${COLORIZE_SH_SOURCE_DIR}/colorizer.sh\"\n" \
+    "${TEST_CPU_SECONDS}" "${LIBRARY_DIR}"
 }
 
 ###
@@ -115,9 +124,9 @@ colorize_in_test_shell_showing_line_ends() {
 # For inputs that make colorize loop forever. The command runs in the
 # background and is polled, as macOS has no `timeout` command.
 #
-# The command must be an external program, not a function: a backgrounded
-# simple command runs as that program's own process, so `kill` reaches it.
-# A function would run in a subshell whose children survive the kill.
+# Job control puts the background job into a process group of its own, and
+# the whole group is ended: the looping process is a `$(...)` subshell of the
+# shell under test, which survives when only the shell is killed.
 #
 # Arguments:
 #   seconds: how long the command may run
@@ -130,8 +139,10 @@ with_time_limit() {
   local seconds="${1}"
   shift
 
+  set -m
   "$@" &
   local pid="${!}"
+  set +m
   local polls=$((seconds * 10))
 
   while [ "${polls}" -gt 0 ]; do
@@ -143,7 +154,7 @@ with_time_limit() {
     polls=$((polls - 1))
   done
 
-  kill "${pid}" 2> /dev/null
+  kill -TERM -- "-${pid}" 2> /dev/null
   wait "${pid}" 2> /dev/null
   return 124
 }
