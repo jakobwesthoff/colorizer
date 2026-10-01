@@ -1,4 +1,4 @@
-# Bug: `ARRAY_peek` and `ARRAY_pop` misbehave on an empty array
+# Bug: `ARRAY_pop` misbehaves on an empty array
 
 **Priority:** bug (ends the calling script in ash)
 
@@ -6,30 +6,27 @@ On an empty array:
 
 | | bash 5.3.20, 3.2.57 | zsh 5.9.2 | busybox ash (default layer) |
 |---|---|---|---|
-| `ARRAY_peek` | empty, `bad array subscript` on stderr | empty | prints `1` |
-| `ARRAY_pop` in `$(...)` | empty, `bad array subscript` | empty, `assignment to invalid subscript range` | prints `1`, `bad variable name` |
+| `ARRAY_pop` in `$(...)` | empty, `unset: [0-1]: bad array subscript` | empty, `assignment to invalid subscript range` | prints `1`, `bad variable name` |
 | `ARRAY_pop` directly | script goes on, the errors above on stderr | script goes on, the error above on stderr | **ends the calling script**, status 2 |
 
-colorize reads the top of an empty stack for a closing tag without an
-opening one, which gives bug `01m3vjjpv54172b98ekcekpfj3` (garbage in the
-error message). It does not pop an empty stack, as the mismatch check exits
-first.
+colorize does not pop an empty stack, as its mismatch check exits first.
+`ARRAY_peek` on an empty array prints an empty line in every layer.
 
 ## Cause
 
-Each layer computes the last index as count minus one, -1 for an empty
+`ARRAY_pop` computes the last index as count minus one, -1 for an empty
 array, without checking:
 
-- bash: `${list[${#list[@]}-1]}` with index -1.
-- zsh: `ARRAY_pop` unsets index 0 (`list[0]=()`), which zsh rejects.
+- bash: `unset list[-1]`, a bad subscript.
+- zsh: unsets index 0 (`list[0]=()`), which zsh rejects.
 - default layer: `${list_-1}`, which the shell reads as the `${var-default}`
   expansion of `list_`, giving `1`; `unset list_-1` is an error in a special
   builtin, which ends a non-interactive POSIX shell.
 
 ## Test that detects it
 
-`tests/compatibility.bats` pins today's behaviour ("peek and pop on an
-empty array: errors in bash and zsh, a 1 in ash" and "a pop on an empty
+`tests/compatibility.bats` pins today's behaviour ("pop on an empty
+array: errors in bash and zsh, a 1 in ash" and "a pop on an empty
 array: harmless in bash and zsh, ends the script in ash"). Once fixed,
 replace those with this one. It fails today in all four shells:
 
@@ -57,7 +54,8 @@ not decided; extend the test once it is.
 
 ## Proposal (input, not decided)
 
-Return early when `ARRAY_count` is 0, in all three layers.
+Return early on an empty array, in all three layers, as `ARRAY_peek`
+does.
 
 ## Decision
 

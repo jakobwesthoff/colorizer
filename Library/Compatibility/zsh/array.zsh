@@ -116,6 +116,12 @@ ARRAY_push() {
 ARRAY_peek() {
     local name="${1}"
 
+    # An empty array has no last element; index 0 is not an element in zsh.
+    if eval "[ \"\${#${name}[@]}\" -eq 0 ]"; then
+        echo ""
+        return 0
+    fi
+
     eval "echo \"\${${name}[\${#${name}[@]}]}\""
 }
 

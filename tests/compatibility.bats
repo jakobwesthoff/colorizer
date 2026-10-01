@@ -80,9 +80,9 @@ ARRAY_push list "two"; ARRAY_count list'
   esac
 }
 
-# Bug todo 01m3vk1qb40aghhdk8ngs7yz5t: the last index of an empty array is
-# -1, which each layer mishandles differently.
-@test "peek and pop on an empty array: errors in bash and zsh, a 1 in ash" {
+# Bug todo 01m3vk1qb40aghhdk8ngs7yz5t: pop computes the last index of an
+# empty array as -1, which each layer mishandles differently.
+@test "pop on an empty array: errors in bash and zsh, a 1 in ash" {
   run --separate-stderr in_test_shell 'ARRAY_define list
 echo "peek: [$(ARRAY_peek list)]"
 echo "pop: [$(ARRAY_pop list)]"
@@ -98,7 +98,7 @@ echo "count: $(ARRAY_count list)"'
       [[ "${stderr}" == *"assignment to invalid subscript range"* ]]
       ;;
     ash)
-      assert_output "$(printf 'peek: [1]\npop: [1]\ncount: 0')"
+      assert_output "$(printf 'peek: []\npop: [1]\ncount: 0')"
       [[ "${stderr}" == *"bad variable name"* ]]
       ;;
   esac

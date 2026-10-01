@@ -46,24 +46,11 @@ colorize \"\$1\"" colorizer-test "${1}"
   assert_output "$(printf 'Could not find closing tag for <red>\nstill running')"
 }
 
-# Bug todo 01m3vjjpv54172b98ekcekpfj3: the empty stack is read as an element.
-@test "a closing tag without an opening one: the message differs per shell" {
+@test "a closing tag without an opening one is reported cleanly" {
   run --separate-stderr colorize_in_test_shell 'x</red>'
 
-  assert_status 0
-  case "$(test_shell_kind)" in
-    bash)
-      assert_output 'Mismatching colorize tag nesting at <>...</red>'
-      [[ "${stderr}" == *"bad array subscript"* ]]
-      ;;
-    zsh)
-      assert_output 'Mismatching colorize tag nesting at <>...</red>'
-      [ -z "${stderr}" ]
-      ;;
-    ash)
-      assert_output 'Mismatching colorize tag nesting at <1>...</red>'
-      ;;
-  esac
+  [ -z "${stderr}" ]
+  assert_output 'Mismatching colorize tag nesting at <>...</red>'
 }
 
 @test "an empty tag works like an undefined one" {

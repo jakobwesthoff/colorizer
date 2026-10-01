@@ -77,7 +77,14 @@ ARRAY_push() {
 ARRAY_peek() {
     local name="${1}"
 
+    # An empty array has no last index; `${name_-1}` would read as a default
+    # value expansion and print "1".
     local index="$(( $(ARRAY_count "${name}") - 1 ))"
+    if [ "${index}" -lt 0 ]; then
+        echo ""
+        return 0
+    fi
+
     eval "echo \"\${${name}_${index}}\""
 }
 

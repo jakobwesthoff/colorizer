@@ -114,6 +114,12 @@ ARRAY_push() {
 ARRAY_peek() {
     local name="${1}"
 
+    # An empty array has no last index; -1 would be a bad subscript.
+    if eval "[ \"\${#${name}[@]}\" -eq 0 ]"; then
+        echo ""
+        return 0
+    fi
+
     eval "echo \"\${${name}[\${#${name}[@]}-1]}\""
 }
 
