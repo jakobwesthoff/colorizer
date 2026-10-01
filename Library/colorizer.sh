@@ -212,7 +212,9 @@ colorize() {
             n) newline_option="SET";;
             p) prompt_option="SET";;
             s) strip_option="SET";;
-            \?) echo "Invalid option (-${OPTARG}) given to colorize"; exit 42;;
+            # On stderr, so the message never ends up in captured output;
+            # returned, so the calling script goes on.
+            \?) echo "Invalid option (-${OPTARG}) given to colorize" >&2; return 42;;
         esac
     done
     shift $((OPTIND-1))

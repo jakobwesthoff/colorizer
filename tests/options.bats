@@ -102,16 +102,20 @@ setup_file() {
   done
 }
 
-@test "an invalid option prints a message and ends the calling script with 42" {
-  run in_test_shell 'colorize -x "y"; echo "still running"'
+# The message goes to stderr, so it never ends up in captured output such as
+# a prompt; the calling script goes on.
+@test "an invalid option prints a message on stderr and returns 42" {
+  run --separate-stderr in_test_shell 'colorize -x "y"; echo "colorize returned $?, still running"'
 
-  assert_status 42
-  assert_output 'Invalid option (-x) given to colorize'
+  assert_status 0
+  assert_output 'colorize returned 42, still running'
+  [ "${stderr}" = 'Invalid option (-x) given to colorize' ]
 }
 
 @test "an invalid option inside a group of options is found as well" {
-  run in_test_shell 'colorize -nx "y"; echo "still running"'
+  run --separate-stderr in_test_shell 'colorize -nx "y"; echo "colorize returned $?"'
 
-  assert_status 42
-  assert_output 'Invalid option (-x) given to colorize'
+  assert_status 0
+  assert_output 'colorize returned 42'
+  [ "${stderr}" = 'Invalid option (-x) given to colorize' ]
 }
