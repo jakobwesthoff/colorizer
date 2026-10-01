@@ -30,6 +30,13 @@ require_test_shell() {
     echo "TEST_SHELL '${TEST_SHELL}' is not installed" >&2
     return 1
   fi
+
+  # Tests with per-shell expectations branch on the family; an unknown one
+  # would match none of their branches and assert nothing.
+  if [ "$(test_shell_kind)" = "unknown" ]; then
+    echo "TEST_SHELL '${TEST_SHELL}' is not bash, zsh or busybox ash" >&2
+    return 1
+  fi
 }
 
 ###
