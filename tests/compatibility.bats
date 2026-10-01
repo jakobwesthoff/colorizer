@@ -78,7 +78,7 @@ echo "pop: [$(ARRAY_pop list)]"
 echo "count: $(ARRAY_count list)"'
 
   assert_output "$(printf 'peek: []\npop: []\ncount: 0')"
-  [ -z "${stderr}" ]
+  assert_stderr ''
 
   run in_test_shell 'ARRAY_define list
 ARRAY_pop list > /dev/null

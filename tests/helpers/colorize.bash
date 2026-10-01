@@ -178,6 +178,18 @@ assert_output() {
 }
 
 ###
+# Compare $stderr (from `run --separate-stderr`) with the expected text, and
+# show both when they differ; '' expects nothing on stderr
+###
+assert_stderr() {
+  # shellcheck disable=SC2154 # set by bats' `run --separate-stderr`
+  if [ "${stderr}" != "${1}" ]; then
+    printf 'expected stderr: %s\nactual stderr:   %s\n' "${1}" "${stderr}"
+    return 1
+  fi
+}
+
+###
 # Compare $status with the expected status, and show both when they differ
 ###
 assert_status() {

@@ -28,7 +28,7 @@ colorize \"\$1\"" colorizer-test "${1}"
 
   assert_status 42
   assert_output 'x'
-  [ "${stderr}" = 'Mismatching colorize tag nesting at <red>...</green>' ]
+  assert_stderr 'Mismatching colorize tag nesting at <red>...</green>'
 }
 
 @test "an unclosed tag: message on stderr, the bare text, status 42" {
@@ -36,7 +36,7 @@ colorize \"\$1\"" colorizer-test "${1}"
 
   assert_status 42
   assert_output 'x'
-  [ "${stderr}" = 'Could not find closing tag for <red>' ]
+  assert_stderr 'Could not find closing tag for <red>'
 }
 
 @test "a closing tag without an opening one: message on stderr, the bare text, status 42" {
@@ -44,7 +44,7 @@ colorize \"\$1\"" colorizer-test "${1}"
 
   assert_status 42
   assert_output 'x'
-  [ "${stderr}" = 'Mismatching colorize tag nesting at <>...</red>' ]
+  assert_stderr 'Mismatching colorize tag nesting at <>...</red>'
 }
 
 @test "the bare text keeps entities decoded and invalid tag names as text" {
@@ -84,13 +84,13 @@ colorize \"\$1\"" colorizer-test "${1}"
 
   assert_status 0
   assert_output '<red >x</red >'
-  [ -z "${stderr}" ]
+  assert_stderr ''
 
   run --separate-stderr colorize_in_test_shell 'a < b > c <red>d</red>'
 
   assert_status 0
   assert_output 'a < b > c ^[[0;31md^[[0m'
-  [ -z "${stderr}" ]
+  assert_stderr ''
 }
 
 # Without a `>` after it, a `<` cannot start a tag; the rest of the text is
@@ -105,7 +105,7 @@ colorize \"\$1\"" colorizer-test "${1}"
 
   assert_status 0
   assert_output 'a < b'
-  [ -z "${stderr}" ]
+  assert_stderr ''
 
   run colorize_with_time_limit '<red>x</red> if 1 < 2'
 

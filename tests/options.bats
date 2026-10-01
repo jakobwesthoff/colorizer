@@ -42,7 +42,7 @@ setup_file() {
 
   assert_status 42
   assert_output 'x'
-  [ "${stderr}" = 'Mismatching colorize tag nesting at <red>...</green>' ]
+  assert_stderr 'Mismatching colorize tag nesting at <red>...</green>'
 }
 
 @test "-s wins over -p" {
@@ -110,7 +110,7 @@ setup_file() {
 
   assert_status 0
   assert_output 'colorize returned 42, still running'
-  [ "${stderr}" = 'Invalid option (-x) given to colorize' ]
+  assert_stderr 'Invalid option (-x) given to colorize'
 }
 
 @test "an invalid option inside a group of options is found as well" {
@@ -118,5 +118,5 @@ setup_file() {
 
   assert_status 0
   assert_output 'colorize returned 42'
-  [ "${stderr}" = 'Invalid option (-x) given to colorize' ]
+  assert_stderr 'Invalid option (-x) given to colorize'
 }
