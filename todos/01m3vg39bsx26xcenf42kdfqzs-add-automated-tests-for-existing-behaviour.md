@@ -61,12 +61,39 @@ versions, with all running logic in a `justfile`.
   image for `bash:3.2`, `bash:4.4`, `bash:5.2` against bash, zsh and ash.
 - Expected output is written in `cat -v` form.
 
-In place: the setup and one smoke test, passing on the host (Homebrew bash
-5.3.20, macOS bash 3.2.57, zsh 5.9.2) and in all nine Docker combinations.
+- Every shell a test starts runs under `ulimit -t`, and `with_time_limit`
+  ends a whole process group, as some inputs make colorize loop forever in
+  a subshell that outlives its parent.
+- Known bugs are pinned as they behave today. Each such test names a bug
+  todo, which holds the test for the fixed behaviour; that test was run to
+  confirm it fails today where the bug exists.
+
+## State
+
+The coverage list above is done: 93 tests in `tests/` (smoke, tags, text,
+nesting, options, errors, palette, loading, compatibility), passing on
+2026-10-01 on the host (Homebrew bash 5.3.20, macOS bash 3.2.57, zsh
+5.9.2) and in all nine Docker combinations.
+
+Bug todos written while building the suite, each with its detecting test:
+
+- `01m3vfmxyb4fxzzgvq1wyw1jsw` dashed parent tag not restored (test added)
+- `01m3vj6swnh7hhb76kzx9x91pe` zsh interprets backslashes twice
+- `01m3vjf7nwsj3jd7vmc4e5wb1d` text that is an `echo` option is lost
+- `01m3vjjpv54172b98ekcekpfj2` malformed markup returns status 0
+- `01m3vjjpv54172b98ekcekpfj3` stray closing tag reports garbage
+- `01m3vjjpv54172b98ekcekpfj4` a `<` without `>` loops forever
+- `01m3vjjpv54172b98ekcekpfj5` invalid tag names break the output
+- `01m3vjjpv54172b98ekcekpfj6` tag text runs as a command (security)
+- `01m3vjvakjz2b1z1rn3d13tqdc` `colourise` missing in bash scripts
+- `01m3vjvakkc14se0106bstkvma` loading under `set -u` fails in zsh and ash
+- `01m3vk1qb40aghhdk8ngs7yz5r` `ARRAY_push` evaluates its value
+- `01m3vk1qb40aghhdk8ngs7yz5s` `ARRAY_count` ignores empty values
+- `01m3vk1qb40aghhdk8ngs7yz5t` peek and pop on an empty array
+- `01m3vk1qb40aghhdk8ngs7yz5v` bash `ARRAY_unset` leaves a hole
 
 ## Open
 
-- The coverage list above, beyond the smoke test.
 - The zsh minimum (5.0.8, `zshusers/zsh`); whether bats installs there is
   unchecked.
 - CI (GitHub Actions running `just test-docker`).
