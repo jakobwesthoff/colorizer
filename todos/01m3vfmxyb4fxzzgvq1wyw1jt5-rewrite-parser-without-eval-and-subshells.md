@@ -12,11 +12,9 @@ called through `$(...)`.
 - **`eval` on tag names.** The palette lookups paste the tag name into
   `eval`. Names are checked against `[A-Za-z0-9_-]*` first, so input
   cannot run code, but every lookup is still an `eval`.
-- **Errors replace the text.** A mismatched or unclosed tag makes the
-  parser print the error as its result and exit 42 from its subshell;
-  `colorize` prints that message as the line and returns 42.
-- **Invalid option ends the caller.** `exit 42` in the `getopts` loop
-  (line 215) runs in the caller's shell.
+- **Errors parse twice.** For malformed markup the parser exits 42 from its
+  subshell, and `colorize` parses the text a second time, without the
+  nesting check, to print it without its tags.
 - **Speed.** Every closing tag costs several subshells (`$(ARRAY_peek)`
   twice, `$(ARRAY_count)`), plus one per call for the result and one for
   the final count. 300 lines with three tags each took 2.35 to 2.47 s
@@ -36,19 +34,18 @@ called through `$(...)`.
   validated.
 - Result in a variable (for example `COLORIZER_RESULT`) instead of
   `$(...)`, so errors can return a status.
-- Errors on stderr. Open: whether the invalid-option case keeps
-  `exit 42`, while malformed markup returns 42 (see below).
-- Keep loading the `ARRAY_*` files, in case callers use those functions.
+- Keep the decided error contract (2026-10-01): messages on stderr, status
+  42, the calling script goes on, and for malformed markup the text without
+  its tags on stdout.
+- The `ARRAY_*` functions are internal (decided 2026-10-01, README); the
+  rewrite may drop them.
 - A test suite before the rewrite, to pin today's output for every case
   that works: the README tag tables, nesting, `-n`, `-p`, `-s`, entities.
 
 ## Backwards compatibility
 
-Output for valid input must stay byte for byte the same; the tests above
-check that. Changes only where the output is an error message today
-(whether it moves to stderr). A switch from `exit` to `return` for an
-invalid option would change control flow for callers that expect
-`colorize` to end the script; that needs a decision.
+Output for valid input must stay byte for byte the same; the tests check
+that, including the error contract above.
 
 ## Related
 

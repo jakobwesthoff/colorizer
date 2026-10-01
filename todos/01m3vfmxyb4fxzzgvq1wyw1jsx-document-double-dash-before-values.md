@@ -5,10 +5,9 @@
 `colorize` parses its arguments with `getopts ":nps"`
 (`colorizer.sh:210`), so text starting with `-` is taken as options:
 
-- An unknown option runs `exit 42` (line 215) in the caller's shell, not
-  in a subshell, so the calling script ends.
-  `colorize "-x is a flag"; echo after` prints
-  `Invalid option (-x) given to colorize` and never reaches `echo`.
+- An unknown option is reported on stderr and `colorize` returns 42 without
+  printing the text: `colorize "-x is a flag"` prints only
+  `Invalid option (-x) given to colorize`, on stderr.
 - A known one is consumed: `colorize "-n"` prints nothing.
 
 `getopts` already treats `--` as the end of the options:
@@ -19,8 +18,8 @@ and 3.2.57. The README does not mention it.
 prints `-n`), since colorize prints with `printf`.
 
 Tests: `tests/options.bats` ("text that is an option is taken as one",
-"-- ends the options", "an invalid option prints a message and ends the
-calling script with 42").
+"-- ends the options", "an invalid option prints a message on stderr and
+returns 42").
 
 ## Proposal (input, not decided)
 
@@ -32,11 +31,6 @@ calling script with 42").
 ## Backwards compatibility
 
 Documentation only.
-
-## Related
-
-Whether `exit 42` should become `return 42` is part of the parser rewrite
-(`01m3vfmxyb4fxzzgvq1wyw1jt5`).
 
 ## Decision
 
