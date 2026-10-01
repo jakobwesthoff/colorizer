@@ -152,7 +152,10 @@ COLORIZER_process_input() {
 
     result="${result//&lt;/<}"
     result="${result//&gt;/>}"
-    echo "${result}"
+
+    # Backslash sequences are interpreted once, by colorize's output. zsh's
+    # `echo` would interpret them here already.
+    printf '%s\n' "${result}"
 }
 
 ##

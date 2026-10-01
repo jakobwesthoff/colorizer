@@ -122,18 +122,6 @@ setup_file() {
   assert_output 'x^[[1my'
 }
 
-# zsh interprets backslash sequences twice: bug todo
-# 01m3vj6swnh7hhb76kzx9x91pe, which has the test for the fixed behaviour.
-@test "an escaped backslash: one backslash, or a second interpretation in zsh" {
-  run colorize_in_test_shell 'a\\b'
-
-  assert_status 0
-  case "$(test_shell_kind)" in
-    zsh) assert_output 'a^H' ;;
-    *) assert_output 'a\b' ;;
-  esac
-}
-
 # The README's prompt example. Its bash prompt escapes go through `echo -e`:
 # bash and ash leave `\u` without hex digits alone, zsh's echo turns it into
 # a NUL byte (one interpretation is enough for that).
@@ -147,14 +135,14 @@ setup_file() {
   esac
 }
 
-# The same bug: in zsh the first interpretation cuts the text, the second
-# prints the newline.
-@test "\\c ends the output: without the newline, except in zsh" {
+@test "backslash sequences are interpreted once, in every shell" {
+  run colorize_in_test_shell 'a\\b'
+
+  assert_status 0
+  assert_output 'a\b'
+
   run colorize_in_test_shell_showing_line_ends 'a\cb'
 
   assert_status 0
-  case "$(test_shell_kind)" in
-    zsh) assert_output 'a$' ;;
-    *) assert_output 'a' ;;
-  esac
+  assert_output 'a'
 }
