@@ -62,8 +62,9 @@ strips XML tags without including ANSI colors.
 ### Aliases
 
 As *colorize* and *colourise* is differently spelled in american and british
-english an alias is defined for the `colorize` function. Therefore you may
-substitute it with the `colourise` command without thinking about it.
+english a `colourise` function is defined that calls `colorize`. Therefore you
+may substitute it with the `colourise` command without thinking about it, in
+scripts as well as in interactive shells.
 
 ## Loading the Library
 

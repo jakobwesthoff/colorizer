@@ -198,5 +198,8 @@ colorize() {
     fi
 }
 
-# Allow alternate spelling
-alias colourise=colorize
+# Allow alternate spelling. A function rather than an alias, as bash does not
+# expand aliases in scripts.
+colourise() {
+    colorize "$@"
+}

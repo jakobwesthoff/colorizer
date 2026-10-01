@@ -126,32 +126,11 @@ colorize '<red>x</red>'"
   assert_output '^[[0;31mx^[[0m'
 }
 
-# Bug todo 01m3vjvakjz2b1z1rn3d13tqdc: bash does not expand aliases in
-# scripts.
-@test "the colourise alias: works in zsh and ash scripts, not in bash scripts" {
-  local script="COLORIZE_SH_SOURCE_DIR='${LIBRARY_DIR}'
+@test "colourise works in scripts of every shell" {
+  run -0 run_script_in_test_shell "COLORIZE_SH_SOURCE_DIR='${LIBRARY_DIR}'
 . \"\${COLORIZE_SH_SOURCE_DIR}/colorizer.sh\"
 colourise '<red>x</red>'"
 
-  case "$(test_shell_kind)" in
-    bash)
-      run -127 run_script_in_test_shell "${script}"
-      [[ "${output}" == *"colourise: command not found"* ]]
-      ;;
-    *)
-      run -0 run_script_in_test_shell "${script}"
-      assert_output '^[[0;31mx^[[0m'
-      ;;
-  esac
-}
-
-@test "the colourise alias works in bash scripts that enable alias expansion" {
-  run run_script_in_test_shell "shopt -s expand_aliases 2> /dev/null
-COLORIZE_SH_SOURCE_DIR='${LIBRARY_DIR}'
-. \"\${COLORIZE_SH_SOURCE_DIR}/colorizer.sh\"
-colourise '<red>x</red>'"
-
-  assert_status 0
   assert_output '^[[0;31mx^[[0m'
 }
 
