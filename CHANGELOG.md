@@ -38,6 +38,8 @@
 
 ### Added
 
+- `colorize_code` prints the escape sequence of one or more tags, combined,
+  for programs that format text themselves.
 - Text attribute tags: `bold`, `dim`, `italic`, `underline`,
   `double-underline`, `reverse` and `strike`.
 - Bright color tags (`bright-red`, … `bright-black`), which use the terminal's

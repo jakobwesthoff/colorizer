@@ -68,6 +68,22 @@ strips XML tags without including ANSI colors.
     # Send to stdout with colors
     colorize $LOG_STRING
 
+### Escape codes for other renderers
+
+Programs that format text themselves, such as a `jq` program or a `printf`
+format, can get the escape sequence of one or more tags with `colorize_code`.
+Several tags combine into one sequence; a later tag adds to the earlier ones
+instead of resetting them:
+
+    title="$(colorize_code bold italic double-underline)"   # \033[1;3;4:2m
+    reset="$(colorize_code none)"                            # \033[0m
+    printf '%s%s%s\n' "${title}" "Report" "${reset}"
+
+`colorize_code -v name tag...` assigns the sequence to the variable `name`
+instead of printing it, which saves the subshell in bash and zsh. Variable
+names starting with `colorizer_` are reserved. An undefined or invalid tag
+name, or no tag at all, is reported on stderr and `colorize_code` returns 1.
+
 ### Aliases
 
 As *colorize* and *colourise* is differently spelled in american and british

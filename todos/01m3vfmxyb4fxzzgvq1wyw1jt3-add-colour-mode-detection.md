@@ -35,7 +35,8 @@ colours from piped output, which callers may rely on.
 
 ## Related
 
-- `colorize_code` respects the mode: `01m3vfmxyb4fxzzgvq1wyw1jt2`.
+- `colorize_code` (in place) has to respect the mode as well: an empty
+  sequence when colours are off.
 
 ## For k8s:drift
 

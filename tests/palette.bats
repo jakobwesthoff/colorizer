@@ -39,7 +39,6 @@ setup_file() {
 }
 
 @test "a built-in tag set before loading keeps its value" {
-  # shellcheck disable=SC2030,SC2031 # each test runs in its own subshell, the export stays there
   export COLORIZER_red="1;36"
 
   run colorize_in_test_shell '<red>x</red>'
@@ -51,7 +50,6 @@ setup_file() {
 # The defaults are assigned with `${VAR:=default}`, which treats an empty
 # value like an unset one.
 @test "a built-in tag set to empty before loading gets its default" {
-  # shellcheck disable=SC2030,SC2031 # each test runs in its own subshell, the export stays there
   export COLORIZER_red=""
 
   run colorize_in_test_shell '<red>x</red>'

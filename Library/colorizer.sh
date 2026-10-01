@@ -285,6 +285,83 @@ colorize() {
     return "${process_status}"
 }
 
+##
+# Print the escape sequence of one or more tags, combined into one
+#
+# For programs that render text themselves (a jq program, a printf format)
+# and only need the codes. Tag names are looked up as in colorize, so custom
+# tags work. Every palette code but the first loses a leading `0;`, so a
+# later tag adds to the earlier ones instead of resetting them:
+# `colorize_code bold red` gives ESC[1;31m.
+#
+# @option -v name assign the sequence to the variable instead of printing it;
+#                 names starting with `colorizer_` are reserved, as the
+#                 function's own variables would hide them
+# @param tag...
+# @return 1 for an undefined or invalid tag name, no tag, or an invalid
+#         variable name; 42 for an invalid option
+##
+colorize_code() {
+    local OPTIND=1
+    local colorizer_option=""
+    local colorizer_target=""
+    while getopts ":v:" colorizer_option; do
+        case "${colorizer_option}" in
+            v) colorizer_target="${OPTARG}";;
+            :) echo "Option -${OPTARG} of colorize_code needs a variable name" >&2; return 42;;
+            \?) echo "Invalid option (-${OPTARG}) given to colorize_code" >&2; return 42;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    if [ "${#}" -eq 0 ]; then
+        echo "colorize_code needs at least one tag" >&2
+        return 1
+    fi
+
+    # The variable name ends up in evaluated code, so it has to be one.
+    case "${colorizer_target}" in
+        [!A-Za-z_]* | *[!A-Za-z0-9_]*)
+            echo "Invalid variable name for colorize_code -v: ${colorizer_target}" >&2
+            return 1
+            ;;
+    esac
+
+    local colorizer_codes=""
+    local colorizer_tag=""
+    local colorizer_code=""
+    for colorizer_tag in "${@}"; do
+        # Validated before the lookup's `eval`, as in colorize.
+        case "${colorizer_tag}" in
+            "" | *[!A-Za-z0-9_-]*)
+                echo "Invalid colorize tag name <${colorizer_tag}>" >&2
+                return 1
+                ;;
+        esac
+
+        if eval "[ -z \"\${COLORIZER_${colorizer_tag//-/_}+set}\" ]"; then
+            echo "Unknown colorize tag <${colorizer_tag}>" >&2
+            return 1
+        fi
+        eval "colorizer_code=\"\${COLORIZER_${colorizer_tag//-/_}}\""
+
+        if [ -z "${colorizer_codes}" ]; then
+            colorizer_codes="${colorizer_code}"
+        elif [ -n "${colorizer_code}" ]; then
+            colorizer_codes="${colorizer_codes};${colorizer_code#0;}"
+        fi
+    done
+
+    if [ -z "${colorizer_target}" ]; then
+        printf '%b' "${COLORIZER_START}${colorizer_codes}${COLORIZER_END}"
+    elif [ -n "${BASH_VERSION:-}${ZSH_VERSION:-}" ]; then
+        printf -v "${colorizer_target}" '%b' "${COLORIZER_START}${colorizer_codes}${COLORIZER_END}"
+    else
+        # Other shells have no `printf -v`, and pay for a subshell.
+        eval "${colorizer_target}=\"\$(printf '%b' \"\${COLORIZER_START}\${colorizer_codes}\${COLORIZER_END}\")\""
+    fi
+}
+
 # Allow alternate spelling. A function rather than an alias, as bash does not
 # expand aliases in scripts.
 colourise() {

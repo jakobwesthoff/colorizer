@@ -41,8 +41,8 @@ later rewrite must keep the `COLORIZER_<name>` lookup.
 ## Related
 
 - Nested custom tags combine badly today: `01m3vfmxyb4fxzzgvq1wyw1jt4`.
-- Getting a tag's raw code for other renderers:
-  `01m3vfmxyb4fxzzgvq1wyw1jt2`.
+- `colorize_code` (in place) gives a custom tag's raw code for other
+  renderers.
 
 ## For k8s:drift
 
