@@ -1,0 +1,25 @@
+# Runs the same recipes as a local run: shellcheck over the test code, then the
+# suite in the Docker matrix (bash 3.2, 4.4 and 5.2, each with zsh and busybox
+# ash). The images bring bats and the shells; the runner only needs just.
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install just
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes just
+
+      - name: Lint the test code
+        run: just lint
+
+      - name: Run the suite in the Docker matrix
+        run: just test-docker

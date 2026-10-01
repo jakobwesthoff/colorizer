@@ -17,15 +17,21 @@ Nested tags are possible as well:
 
     colorize "<green>This is a <yellow>yellow colored</yellow> string inside a green one</green>"
 
-Due to the XML-like nature of the used definition language `<` (less than) and
-`>` (greater than) characters can no longer be used inside the provided string.
-You need to escape them using their usual XML entity representation:
+Due to the XML-like nature of the used definition language, `<` (less than) and
+`>` (greater than) characters that look like a tag are taken as one. Escape
+them using their usual XML entity representation:
 
     colorize "<cyan>1</cyan> &lt; <purple>2</purple>"
 
+A tag name consists of letters, digits, `_` and `-`. A name that is not
+defined resets the colors. Anything else between `<` and `>`, and a `<` with
+no `>` after it, is printed as it is, so `colorize "1 < 2"` works without
+escaping. Text from outside your script, such as command output, can contain
+something that looks like a tag, so escape `<` and `>` in it.
+
 Mismatched tags as well as missing start or end tags will be detected. In this
-case an error message indicating the problem will be echoed back as well as an
-exit with errorcode *42* will be issued.
+case the problem is reported on stderr, the text is printed without its tags,
+and `colorize` returns with status *42*. The calling script goes on.
 
 ### Options
 
@@ -35,12 +41,15 @@ Option | Type    | Description
 `-p`   | Boolean | Escape ANSI colorcodes for prompt usage
 `-s`   | Boolean | Strip XML color tags rather than injecting ANSI
 
+An unknown option is reported on stderr, and `colorize` returns with status
+*42*.
+
 ### Examples
 
-**Colorizer** uses the `echo -e` command to output the formatted information.
-Therefore a newline is automatically echoed at the end of the string. If you do
-not want to output this newline just supply the `-n` option to `colorize`. In
-this case `echo -en` is used for output to suppress the newline:
+**Colorizer** prints the formatted information with `printf '%b'`, which
+interprets backslash sequences like `echo -e`. A newline is printed at the end
+of the string. If you do not want to output this newline just supply the `-n`
+option to `colorize`:
 
     colorize -n "<blue>Question:</blue> Do you think this library rocks? [Y/n]"
 
@@ -59,11 +68,53 @@ strips XML tags without including ANSI colors.
     # Send to stdout with colors
     colorize $LOG_STRING
 
+### Color mode
+
+By default `colorize` always colors, also when its output goes to a file or a
+pipe. `COLORIZER_MODE` changes that:
+
+Mode     | Effect
+-------- | ------
+`always` | Color (the default)
+`never`  | No color: `colorize` strips the tags as with `-s`, `colorize_code` gives an empty sequence
+`auto`   | Color when the output is a terminal, `NO_COLOR` is unset or empty, and `TERM` is not `dumb`
+
+`auto` is decided when the library is loaded, so set `COLORIZER_MODE` before
+loading it:
+
+    COLORIZER_MODE=auto
+    source "folder/to/Colorizer/Library/colorizer.sh"
+    PS4="$(colorize -n '<cyan>+</cyan> ')"   # decided above, also inside $(...)
+
+The decision is not made again in every call, as `colorize` usually runs
+inside `$(...)`, where its output is a pipe and never a terminal. Run
+`colorize_detect` in your own shell to decide again, for example after
+redirecting the output or setting `COLORIZER_MODE=auto` after loading.
+`colorize_detect 2` decides for stderr instead of stdout. `never` and `always`
+apply right away, also when set after loading.
+
+### Escape codes for other renderers
+
+Programs that format text themselves, such as a `jq` program or a `printf`
+format, can get the escape sequence of one or more tags with `colorize_code`.
+Several tags combine into one sequence; a later tag adds to the earlier ones
+instead of resetting them:
+
+    title="$(colorize_code bold italic double-underline)"   # \033[1;3;4:2m
+    reset="$(colorize_code none)"                            # \033[0m
+    printf '%s%s%s\n' "${title}" "Report" "${reset}"
+
+`colorize_code -v name tag...` assigns the sequence to the variable `name`
+instead of printing it, which saves the subshell in bash and zsh. Variable
+names starting with `colorizer_` are reserved. An undefined or invalid tag
+name, or no tag at all, is reported on stderr and `colorize_code` returns 1.
+
 ### Aliases
 
 As *colorize* and *colourise* is differently spelled in american and british
-english an alias is defined for the `colorize` function. Therefore you may
-substitute it with the `colourise` command without thinking about it.
+english a `colourise` function is defined that calls `colorize`. Therefore you
+may substitute it with the `colourise` command without thinking about it, in
+scripts as well as in interactive shells.
 
 ## Loading the Library
 
@@ -81,8 +132,9 @@ containing the `colorize.sh` file.
 ## Available Color-Tags
 
 Currently all *16* default ANSI terminal foreground colors plus all *16* background
-colors are supported. Maybe support for the extended 256 colors modern terminals
-are capable of displaying will be added in the future.
+colors are supported, as well as the bright colors and the common text
+attributes. Maybe support for the extended 256 colors modern terminals are
+capable of displaying will be added in the future.
 
 ### Foreground Colors
 
@@ -132,19 +184,107 @@ Color Tag                                                  | Generated ANSI Code
 &lt;**bg-white**&gt;…&lt;/bg-white&gt;                     | \033[0;30;107m
 &lt;**bg-black**&gt;…&lt;/bg-black&gt;                     | \033[0;37;40m
 
+### Bright Colors
+
+The `light-*` tags are bold plus the normal color, which looks like the normal
+color in terminals that do not render bold. The `bright-*` tags use the
+terminal's bright colors instead:
+
+Color Tag                                          | Generated ANSI Code
+-------------------------------------------------- | -------------------
+&lt;**bright-red**&gt;…&lt;/bright-red&gt;         | \033[91m
+&lt;**bright-green**&gt;…&lt;/bright-green&gt;     | \033[92m
+&lt;**bright-yellow**&gt;…&lt;/bright-yellow&gt;   | \033[93m
+&lt;**bright-blue**&gt;…&lt;/bright-blue&gt;       | \033[94m
+&lt;**bright-purple**&gt;…&lt;/bright-purple&gt;   | \033[95m
+&lt;**bright-cyan**&gt;…&lt;/bright-cyan&gt;       | \033[96m
+&lt;**bright-white**&gt;…&lt;/bright-white&gt;     | \033[97m
+&lt;**bright-black**&gt;…&lt;/bright-black&gt;     | \033[90m
+
+`bright-magenta` is an alias for `bright-purple`, as `magenta`, `light-magenta`
+and `bg-magenta` are for the `purple` tags.
+
+### Text Attributes
+
+Attributes do not reset the color, so they can be nested inside a color tag:
+`<red>a <bold>bold</bold> word</red>`.
+
+Tag                                                        | Generated ANSI Code
+---------------------------------------------------------- | -------------------
+&lt;**bold**&gt;…&lt;/bold&gt;                             | \033[1m
+&lt;**dim**&gt;…&lt;/dim&gt;                               | \033[2m
+&lt;**italic**&gt;…&lt;/italic&gt;                         | \033[3m
+&lt;**underline**&gt;…&lt;/underline&gt;                   | \033[4m
+&lt;**double-underline**&gt;…&lt;/double-underline&gt;     | \033[4:2m
+&lt;**reverse**&gt;…&lt;/reverse&gt;                       | \033[7m
+&lt;**strike**&gt;…&lt;/strike&gt;                         | \033[9m
+
+Terminals without double underline show a single one.
+
+## Custom Tags and Themes
+
+Every tag is looked up as the variable `COLORIZER_<name>`, with a `-` in the
+tag name turned into `_`. Any such variable you set is a tag, so a theme is a
+set of variables. The value is the list of ANSI parameters, without the
+leading `\033[` and the trailing `m`:
+
+    COLORIZER_title="1;3;4:2"            # bold, italic, double underline
+    COLORIZER_stored="${COLORIZER_red}"  # after loading the library
+    COLORIZER_drift_header="1;34"        # used as <drift-header>
+
+    colorize "<title>Drift report</title>"
+    colorize "<stored>- replicas: 2</stored>"
+    colorize_code drift-header
+
+Built-in tags are overridden the same way. Set before loading the library, a
+variable keeps its value, as the defaults only fill in what is unset or empty;
+aliases such as `magenta` follow `purple` only when `purple` is set before
+loading. Set after loading, it applies from the next call on.
+
+A value without a leading `0;` adds to the surrounding color, as the text
+attributes do; the built-in colors start with `0;` and replace it. A tag name
+that has no variable resets the colors, without an error.
+
 ## Limitations
 
-Currently this library has only been tested with the
-[Bash](http://www.gnu.org/software/bash/) (>3.x),
-[ZSH](http://zsh.sourceforge.net/) shell (>5.x) and
-[busybox](http://www.busybox.net/) ash. The code should run in every POSIX
-compatible shell as well, but I didn't have the time to test those yet.
+The test suite runs with [Bash](http://www.gnu.org/software/bash/) 3.2, 4.4
+and 5.2, [ZSH](http://zsh.sourceforge.net/) 5.9 and
+[busybox](http://www.busybox.net/) 1.37 ash (see
+[Running the tests](#running-the-tests)). Other shells are untested; dash, for
+example, does not work, as it has neither `source` nor `${var//...}`.
 
 **Colorizer** uses a lot of quite sophisticated variable expansion features, to
 do all the XML-tag extraction and parsing using only shell builtins to provide
 a fast and nice user experience. Therefore making the library compatible
 with less powerful shells may be a difficult task. However a compatibility
 layer exists, which may allow implementation of complex tasks for different shells.
+
+Only `colorize`, `colourise` and the `COLORIZER_*` variables are meant to be
+used. The functions named `COLORIZER_*` and `ARRAY_*` that the library defines
+are internal and may change.
+
+## Running the tests
+
+You need [just](https://github.com/casey/just),
+[bats](https://github.com/bats-core/bats-core) and zsh; on macOS
+`brew install just bats-core zsh`. The Docker runs need Docker and nothing
+else, as the images bring their own tools.
+
+    just test                              # bash and zsh on this machine
+    just test-shell zsh                    # one shell only
+    just shells="bash /bin/bash zsh" test  # pick the shells yourself
+    just test-docker                       # bash 3.2, 4.4 and 5.2 in Docker,
+                                           # each with zsh and busybox ash
+    just test-all                          # both
+    just lint                              # shellcheck the test code (needs shellcheck)
+
+Every run executes the whole suite once per shell. The shell under test is
+named by `TEST_SHELL`, so running `bats tests/` directly needs it set:
+`TEST_SHELL=zsh bats tests/`. Expected output in the tests is written as
+`cat -v` shows it, with `^[` for the escape character.
+
+`just test-docker` builds one image per bash version from the official `bash`
+images and mounts the repository read-only.
 
 ## How you can help
 

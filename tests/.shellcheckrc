@@ -1,0 +1,7 @@
+# The tests hand scripts to the shell under test as single-quoted strings, so
+# `$1` and friends are meant to stay unexpanded until that shell runs them.
+disable=SC2016
+
+# Each bats test runs in a subshell of its own, so a variable a test exports
+# is meant to stay inside that test.
+disable=SC2030,SC2031

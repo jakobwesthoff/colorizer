@@ -27,11 +27,16 @@
 # This file does include generic entrypoint to the compatibility library, which
 # loads the compatibility layer for your currently used shell
 #
+# The ARRAY_* functions it provides are internal to colorizer's tag parser,
+# not part of its public interface.
+#
 ####
 
-if [ -n "${BASH_VERSION}" ]; then
+# Each shell sets only its own version variable; the defaults keep the
+# others from failing a caller's `set -u`.
+if [ -n "${BASH_VERSION:-}" ]; then
     source "$( cd "$( dirname "${BASH_SOURCE}" )" && pwd )/bash/"*.bash
-elif [ -n "${ZSH_VERSION}" ]; then
+elif [ -n "${ZSH_VERSION:-}" ]; then
     source "$( cd "$( dirname "${0}" )" && pwd )/zsh/"*.zsh
 else
     source "${COLORIZE_SH_SOURCE_DIR}/Compatibility/default/"*.sh

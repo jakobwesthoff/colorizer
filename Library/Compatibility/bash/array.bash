@@ -50,11 +50,9 @@ ARRAY_define() {
 ARRAY_count() {
     local name="${1}"
 
-    if [ -z "$(set +u; eval "echo \"\${${name}}\"")" ]; then
-        echo "0"
-    else
-        eval "echo \"\${#${name}[@]}\""
-    fi
+    # `set +u` lets an array that was never defined count as empty under a
+    # caller's `set -u`; empty values still count as elements.
+    (set +u; eval "echo \"\${#${name}[@]}\"")
 }
 
 ##
@@ -90,7 +88,9 @@ ARRAY_set() {
     local index="${2}"
     local value="${3}"
 
-    eval "${name}[${index}]=\"${value}\""
+    # The evaluated code names the value instead of containing it, so the
+    # value is expanded once, as data, and never parsed as shell code.
+    eval "${name}[${index}]=\"\${value}\""
 }
 
 ##
@@ -103,7 +103,9 @@ ARRAY_push() {
     local name="${1}"
     local value="${2}"
 
-    eval "${name}[\${#${name}[@]}]=\"${value}\""
+    # The evaluated code names the value instead of containing it, so the
+    # value is expanded once, as data, and never parsed as shell code.
+    eval "${name}[\${#${name}[@]}]=\"\${value}\""
 }
 
 ##
@@ -113,6 +115,12 @@ ARRAY_push() {
 ##
 ARRAY_peek() {
     local name="${1}"
+
+    # An empty array has no last index; -1 would be a bad subscript.
+    if eval "[ \"\${#${name}[@]}\" -eq 0 ]"; then
+        echo ""
+        return 0
+    fi
 
     eval "echo \"\${${name}[\${#${name}[@]}-1]}\""
 }
@@ -126,6 +134,12 @@ ARRAY_pop() {
     local name="${1}"
 
     echo "$(ARRAY_peek "${name}")"
+
+    # Nothing to remove from an empty array, and no last index to name.
+    if eval "[ \"\${#${name}[@]}\" -eq 0 ]"; then
+        return 0
+    fi
+
     eval "unset \"${name}[\${#${name}[@]}-1]\""
 }
 
@@ -139,4 +153,9 @@ ARRAY_unset() {
     local index="${2}"
 
     eval "unset ${name}[${index}]"
+
+    # `unset` leaves a hole, while peek and push expect the indexes 0 to
+    # count - 1. Re-packing moves the later elements down, as in zsh. The
+    # `+` form keeps an emptied array from failing `set -u` before bash 4.4.
+    eval "${name}=(\${${name}[@]+\"\${${name}[@]}\"})"
 }

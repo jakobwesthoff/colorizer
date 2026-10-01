@@ -50,11 +50,9 @@ ARRAY_define() {
 ARRAY_count() {
     local name="${1}"
 
-    if [ -z "$(eval "echo \"\${${name}}\"")" ]; then
-        echo "0"
-    else
-        eval "echo \"\${#${name}[@]}\""
-    fi
+    # `set +u` lets an array that was never defined count as empty under a
+    # caller's `set -u`; empty values still count as elements.
+    (set +u; eval "echo \"\${#${name}[@]}\"")
 }
 
 ##
@@ -90,7 +88,9 @@ ARRAY_set() {
     local index="$((${2}+1))"
     local value="${3}"
 
-    eval "${name}[${index}]=\"${value}\""
+    # The evaluated code names the value instead of containing it, so the
+    # value is expanded once, as data, and never parsed as shell code.
+    eval "${name}[${index}]=\"\${value}\""
 }
 
 ##
@@ -105,7 +105,9 @@ ARRAY_push() {
     
     local index="$(($(eval "echo \${#${name}[@]}")+1))"
 
-    eval "${name}[${index}]=\"${value}\""
+    # The evaluated code names the value instead of containing it, so the
+    # value is expanded once, as data, and never parsed as shell code.
+    eval "${name}[${index}]=\"\${value}\""
 }
 
 ##
@@ -115,6 +117,12 @@ ARRAY_push() {
 ##
 ARRAY_peek() {
     local name="${1}"
+
+    # An empty array has no last element; index 0 is not an element in zsh.
+    if eval "[ \"\${#${name}[@]}\" -eq 0 ]"; then
+        echo ""
+        return 0
+    fi
 
     eval "echo \"\${${name}[\${#${name}[@]}]}\""
 }
@@ -130,6 +138,12 @@ ARRAY_pop() {
     local index="$(eval "echo \${#${name}[@]}")"
 
     echo "$(ARRAY_peek "${name}")"
+
+    # Nothing to remove from an empty array, and no last index to name.
+    if [ "${index}" -eq 0 ]; then
+        return 0
+    fi
+
     ARRAY_unset "${name}" "$((${index}-1))"
 }
 

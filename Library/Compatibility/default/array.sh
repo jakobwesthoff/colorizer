@@ -50,7 +50,9 @@ ARRAY_define() {
 ARRAY_count() {
     local name="${1}"
 
-    eval "echo \"\${${name}_COUNT}\""
+    # An array that was never defined has no counter yet; it counts as empty,
+    # also under a caller's `set -u`.
+    eval "echo \"\${${name}_COUNT:-0}\""
 }
 
 ##
@@ -65,7 +67,9 @@ ARRAY_push() {
 
     local index="$(ARRAY_count "${name}")"
 
-    eval "${name}_${index}='${value}'"
+    # The evaluated code names the value instead of containing it, so the
+    # value is expanded once, as data, and never parsed as shell code.
+    eval "${name}_${index}=\"\${value}\""
     eval "${name}_COUNT=$(( ${index} + 1 ))"
 }
 
@@ -77,7 +81,14 @@ ARRAY_push() {
 ARRAY_peek() {
     local name="${1}"
 
+    # An empty array has no last index; `${name_-1}` would read as a default
+    # value expansion and print "1".
     local index="$(( $(ARRAY_count "${name}") - 1 ))"
+    if [ "${index}" -lt 0 ]; then
+        echo ""
+        return 0
+    fi
+
     eval "echo \"\${${name}_${index}}\""
 }
 
@@ -89,7 +100,14 @@ ARRAY_peek() {
 ARRAY_pop() {
     local name="${1}"
 
+    # An empty array has nothing to remove; `unset name_-1` would end the
+    # calling script, as an error in a special builtin does in POSIX shells.
     local index="$(( $(ARRAY_count "${name}") - 1 ))"
+    if [ "${index}" -lt 0 ]; then
+        echo ""
+        return 0
+    fi
+
     eval "echo \"\${${name}_${index}}\""
     eval "${name}_COUNT=${index}"
     eval "unset ${name}_${index}"
