@@ -66,6 +66,13 @@ ARRAY_push list "cost \$HOME"; ARRAY_peek list'
   esac
 }
 
+@test "an array that was never defined counts as empty under set -u" {
+  run in_test_shell 'set -u; ARRAY_count never_defined'
+
+  assert_status 0
+  assert_output '0'
+}
+
 @test "count includes empty values" {
   run in_test_shell 'ARRAY_define list; ARRAY_push list ""; ARRAY_count list
 ARRAY_push list "two"; ARRAY_count list'

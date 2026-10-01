@@ -50,7 +50,9 @@ ARRAY_define() {
 ARRAY_count() {
     local name="${1}"
 
-    eval "echo \"\${${name}_COUNT}\""
+    # An array that was never defined has no counter yet; it counts as empty,
+    # also under a caller's `set -u`.
+    eval "echo \"\${${name}_COUNT:-0}\""
 }
 
 ##
