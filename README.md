@@ -146,6 +146,22 @@ a fast and nice user experience. Therefore making the library compatible
 with less powerful shells may be a difficult task. However a compatibility
 layer exists, which may allow implementation of complex tasks for different shells.
 
+## Running the tests
+
+The tests use [bats](https://github.com/bats-core/bats-core) and are run
+through [just](https://github.com/casey/just). Each run executes the whole
+suite once per shell; the shell under test is named by `TEST_SHELL`.
+
+    just test                              # bash and zsh on this machine
+    just shells="bash /bin/bash zsh" test  # pick the shells yourself
+    just test-docker                       # bash 3.2, 4.4 and 5.2 in Docker,
+                                           # each with zsh and busybox ash
+    just test-all                          # both
+    just lint                              # shellcheck the test code
+
+`just test-docker` needs Docker. It builds one image per bash version from the
+official `bash` images and mounts the repository read-only.
+
 ## How you can help
 
 If you have got some time and are using currently untested shells, I would love

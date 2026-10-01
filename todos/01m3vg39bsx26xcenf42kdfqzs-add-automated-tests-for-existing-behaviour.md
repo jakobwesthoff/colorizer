@@ -49,4 +49,27 @@ and Bats 1.12.0 into it. `zshusers/zsh` has tags per zsh version
 
 ## Decision
 
-_Not yet established._
+Decided 2026-10-01: bats on the host plus a Docker matrix over bash
+versions, with all running logic in a `justfile`.
+
+- One bats suite; `TEST_SHELL` names the shell under test, and
+  `tests/helpers/colorize.bash` runs `colorize` in a separate process of
+  that shell.
+- `just test` runs it on the host (default `bash zsh`, overridable).
+- `tests/docker/Dockerfile` builds on `bash:<version>` and adds zsh, bats
+  and just from Alpine. `just test-docker` runs `just test` inside each
+  image for `bash:3.2`, `bash:4.4`, `bash:5.2` against bash, zsh and ash.
+- Expected output is written in `cat -v` form.
+
+In place: the setup and one smoke test, passing on the host (Homebrew bash
+5.3.20, macOS bash 3.2.57, zsh 5.9.2) and in all nine Docker combinations.
+
+## Open
+
+- The coverage list above, beyond the smoke test.
+- The zsh minimum (5.0.8, `zshusers/zsh`); whether bats installs there is
+  unchecked.
+- CI (GitHub Actions running `just test-docker`).
+- The bats version: Docker uses Alpine's package (1.12.0), the host
+  whatever is installed (1.14.0 on the developer machine). Pinning bats as
+  a git submodule was raised, not decided.
