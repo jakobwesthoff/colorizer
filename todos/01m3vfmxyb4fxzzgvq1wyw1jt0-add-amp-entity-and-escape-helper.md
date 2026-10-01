@@ -1,6 +1,7 @@
 # Decode `&amp;` and add `colorize_escape` for untrusted text
 
-**Priority:** 5 of 11 in the modernize series (cost/effectiveness order)
+**Priority:** 6 of 10 in the modernize series (cost/effectiveness for
+k8s:drift, re-evaluated 2026-10-01)
 
 Text from outside the script (command output, cluster values, user input)
 cannot be passed through `colorize` safely today:

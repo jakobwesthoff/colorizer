@@ -1,6 +1,7 @@
 # Add an opt-in nesting mode that combines styles
 
-**Priority:** 9 of 11 in the modernize series (cost/effectiveness order)
+**Priority:** 9 of 10 in the modernize series (cost/effectiveness for
+k8s:drift, re-evaluated 2026-10-01)
 
 Nested tags replace each other instead of combining. Every built-in palette
 value starts with `0;` (a full reset), and closing a tag re-emits only the

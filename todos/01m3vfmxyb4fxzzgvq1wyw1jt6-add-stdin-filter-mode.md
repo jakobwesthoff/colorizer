@@ -1,6 +1,7 @@
 # Add a filter mode that colours markup read from stdin
 
-**Priority:** 11 of 11 in the modernize series (cost/effectiveness order)
+**Priority:** 10 of 10 in the modernize series (cost/effectiveness for
+k8s:drift, re-evaluated 2026-10-01)
 
 `colorize` takes its text as arguments, one call per message. A program
 that produces many lines in another language cannot hand its output to
@@ -27,14 +28,15 @@ colorizer.
 
 ## Dependencies
 
-- Entities and escaping: `01m3vfmxyb4fxzzgvq1wyw1jt0`.
+- Entities and escaping: `01m3vfmxyb4fxzzgvq1wyw1jt0`. Tag-shaped text in
+  a value (`<b>`) is still taken as markup unless escaped.
 - Raw output, so values with backslashes survive:
   `01m3vfmxyb4fxzzgvq1wyw1jt1`.
 - Composing nesting, for a styled value inside a styled line:
   `01m3vfmxyb4fxzzgvq1wyw1jt4`.
-- Parser rewrite: at about 8 ms per line today, 900 lines would take
-  around 7 s (`01m3vfmxyb4fxzzgvq1wyw1jt5`). How fast a bash `read` loop
-  is after the rewrite has not been measured.
+- Parser speed: at 8 to 12 ms per line (measured 2026-10-01), 900 lines
+  would take about 7 to 11 s (`01m3vfmxyb4fxzzgvq1wyw1jt5`). How fast a
+  bash `read` loop is after that work has not been measured.
 
 ## Backwards compatibility
 

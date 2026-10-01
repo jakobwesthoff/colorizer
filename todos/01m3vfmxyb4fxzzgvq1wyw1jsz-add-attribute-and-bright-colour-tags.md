@@ -1,6 +1,7 @@
 # Add text attribute tags and bright colour tags
 
-**Priority:** 4 of 11 in the modernize series (cost/effectiveness order)
+**Priority:** 1 of 10 in the modernize series (cost/effectiveness for
+k8s:drift, re-evaluated 2026-10-01)
 
 The palette has colours only. Text attributes (bold, dim, italic,
 underline, ...) have no tags, and the `light-*` colours are bold plus the
@@ -46,7 +47,9 @@ Leave `light-*` and `gray` (`1;30`) as they are.
 ## Backwards compatibility
 
 New tag names only. A caller who already defined a variable with the same
-name keeps their value because of `:=`.
+name keeps their value because of `:=`. Text that uses one of these names
+as an undefined tag today (which resets the colours) would get the
+attribute instead.
 
 ## Related
 

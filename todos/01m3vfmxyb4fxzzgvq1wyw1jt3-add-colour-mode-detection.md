@@ -1,6 +1,7 @@
 # Add an opt-in colour mode with terminal and NO_COLOR detection
 
-**Priority:** 8 of 11 in the modernize series (cost/effectiveness order)
+**Priority:** 4 of 10 in the modernize series (cost/effectiveness for
+k8s:drift, re-evaluated 2026-10-01)
 
 `colorize` always emits escape codes. Whether to colour is left to every
 caller, which then has to call `colorize -s` or bypass it. Output piped to

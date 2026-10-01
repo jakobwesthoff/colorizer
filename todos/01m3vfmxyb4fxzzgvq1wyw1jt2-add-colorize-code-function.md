@@ -1,6 +1,7 @@
 # Add `colorize_code` to get the raw escape sequence of tags
 
-**Priority:** 7 of 11 in the modernize series (cost/effectiveness order)
+**Priority:** 2 of 10 in the modernize series (cost/effectiveness for
+k8s:drift, re-evaluated 2026-10-01)
 
 Programs that render text outside `colorize` (a jq program, awk, a
 `printf` format) need the escape sequences themselves. Today they can only

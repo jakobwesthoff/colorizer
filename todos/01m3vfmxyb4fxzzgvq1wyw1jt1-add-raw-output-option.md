@@ -1,6 +1,7 @@
 # Add a raw output option that leaves backslashes alone
 
-**Priority:** 6 of 11 in the modernize series (cost/effectiveness order)
+**Priority:** 7 of 10 in the modernize series (cost/effectiveness for
+k8s:drift, re-evaluated 2026-10-01)
 
 `colorize` prints with `printf '%b'`, so backslash sequences in the text
 are interpreted as `echo -e` would. `\n` and `\t`

@@ -1,6 +1,7 @@
 # Document custom tags as the way to define themes
 
-**Priority:** 3 of 11 in the modernize series (cost/effectiveness order)
+**Priority:** 3 of 10 in the modernize series (cost/effectiveness for
+k8s:drift, re-evaluated 2026-10-01)
 
 Every tag is looked up as the variable `COLORIZER_<name>`, with `-`
 turned into `_` (`colorizer.sh:137` and 140). So any variable a caller
