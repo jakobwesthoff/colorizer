@@ -112,6 +112,42 @@ ${script}" colorizer-test "$@" | cat -ve
 }
 
 ###
+# Run a script in the shell under test with stdout and stderr on a terminal
+#
+# `script` gives the shell a pseudo-terminal, so the library is loaded with a
+# terminal attached, as in an interactive session. `script` adds control
+# characters of its own to the terminal output, so the script writes what the
+# test checks to the file named by $RESULT instead; that file is printed
+# through `cat -v`. util-linux and BSD (macOS) `script` take the command
+# differently.
+#
+# TERM is set explicitly, from TERMINAL_TYPE (default `xterm`): with TERM
+# unset, as in containers and CI, util-linux `script` gives the shell
+# `TERM=dumb`, which turns colors off in `auto` mode.
+#
+# Arguments:
+#   script: shell code to run after loading the library
+###
+in_test_shell_on_a_terminal() {
+  local script_file="${BATS_TEST_TMPDIR}/terminal-script"
+  export RESULT="${BATS_TEST_TMPDIR}/terminal-result"
+
+  {
+    library_loader
+    printf '%s\n' "${1}"
+  } > "${script_file}"
+  : > "${RESULT}"
+
+  if script -V > /dev/null 2>&1; then
+    TERM="${TERMINAL_TYPE:-xterm}" script -qec "${TEST_SHELL} ${script_file}" /dev/null < /dev/null > /dev/null 2>&1
+  else
+    TERM="${TERMINAL_TYPE:-xterm}" script -q /dev/null "${TEST_SHELL}" "${script_file}" < /dev/null > /dev/null 2>&1
+  fi
+
+  cat -v "${RESULT}"
+}
+
+###
 # Run `colorize` with the given arguments in the shell under test
 ###
 colorize_in_test_shell() {

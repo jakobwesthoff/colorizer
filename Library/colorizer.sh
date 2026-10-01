@@ -30,6 +30,13 @@ source "${COLORIZE_SH_SOURCE_DIR:-$( cd "$( dirname "${BASH_SOURCE:-${0}}" )" &&
 COLORIZER_START=${COLORIZER_START:="\033["}
 COLORIZER_END=${COLORIZER_END:="m"}
 
+# Whether to color: `always` (the default), `never`, or `auto`, which colors
+# when the output is a terminal, NO_COLOR is unset or empty and TERM is not
+# `dumb`. `auto` is decided by colorize_detect, once when the library is
+# loaded and whenever the caller runs it again; COLORIZER_ENABLED holds that
+# decision.
+COLORIZER_MODE=${COLORIZER_MODE:="always"}
+
 # Default colors
 COLORIZER_blue=${COLORIZER_blue:="0;34"}
 COLORIZER_green=${COLORIZER_green:="0;32"}
@@ -257,6 +264,11 @@ colorize() {
     done
     shift $((OPTIND-1))
 
+    # Without colors the tags are removed, as with -s.
+    if ! COLORIZER_colors_enabled; then
+        strip_option="SET"
+    fi
+
     # Declared apart from the assignment, as `local` would replace the
     # parser's status with its own.
     local processed_message
@@ -360,6 +372,14 @@ colorize_code() {
         fi
     done
 
+    # Without colors the sequence is empty, so callers can use it either way.
+    if ! COLORIZER_colors_enabled; then
+        if [ -n "${colorizer_target}" ]; then
+            eval "${colorizer_target}=''"
+        fi
+        return 0
+    fi
+
     if [ -z "${colorizer_target}" ]; then
         printf '%b' "${COLORIZER_START}${colorizer_codes}${COLORIZER_END}"
     elif [ -n "${BASH_VERSION:-}${ZSH_VERSION:-}" ]; then
@@ -370,8 +390,66 @@ colorize_code() {
     fi
 }
 
+##
+# Decide whether colorize and colorize_code color their output
+#
+# Only `auto` needs a decision; `always` and `never` apply as they are, also
+# when COLORIZER_MODE changes later. The library runs this once when it is
+# loaded. Run it again in your own shell, not inside `$(...)`, after changing
+# COLORIZER_MODE to `auto` or redirecting the output: inside `$(...)` stdout
+# is a pipe, never a terminal.
+#
+# @param fd the file descriptor to check, 1 (stdout) by default; 2 for a
+#           program that prints its colored output to stderr
+# @return 1 for an invalid file descriptor or an unknown COLORIZER_MODE,
+#         which colors as `always` does
+##
+colorize_detect() {
+    local fd="${1:-1}"
+
+    case "${fd}" in
+        "" | *[!0-9]*)
+            echo "Invalid file descriptor for colorize_detect: ${fd}" >&2
+            return 1
+            ;;
+    esac
+
+    case "${COLORIZER_MODE}" in
+        always) COLORIZER_ENABLED="yes";;
+        never) COLORIZER_ENABLED="no";;
+        auto)
+            if [ -t "${fd}" ] && [ -z "${NO_COLOR:-}" ] && [ "${TERM:-}" != "dumb" ]; then
+                COLORIZER_ENABLED="yes"
+            else
+                COLORIZER_ENABLED="no"
+            fi
+            ;;
+        *)
+            COLORIZER_ENABLED="yes"
+            echo "Unknown COLORIZER_MODE: ${COLORIZER_MODE}" >&2
+            return 1
+            ;;
+    esac
+}
+
+##
+# Whether to color now: `never` and `always` apply directly, `auto` uses the
+# last decision of colorize_detect, and an unknown mode colors
+##
+COLORIZER_colors_enabled() {
+    case "${COLORIZER_MODE}" in
+        never) return 1;;
+        auto) [ "${COLORIZER_ENABLED:-yes}" = "yes" ];;
+        *) return 0;;
+    esac
+}
+
 # Allow alternate spelling. A function rather than an alias, as bash does not
 # expand aliases in scripts.
 colourise() {
     colorize "$@"
 }
+
+# Decide `auto` now, in the shell that loads the library. An unknown mode is
+# reported, but does not fail the loading.
+colorize_detect || :

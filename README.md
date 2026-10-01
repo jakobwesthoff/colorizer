@@ -68,6 +68,31 @@ strips XML tags without including ANSI colors.
     # Send to stdout with colors
     colorize $LOG_STRING
 
+### Color mode
+
+By default `colorize` always colors, also when its output goes to a file or a
+pipe. `COLORIZER_MODE` changes that:
+
+Mode     | Effect
+-------- | ------
+`always` | Color (the default)
+`never`  | No color: `colorize` strips the tags as with `-s`, `colorize_code` gives an empty sequence
+`auto`   | Color when the output is a terminal, `NO_COLOR` is unset or empty, and `TERM` is not `dumb`
+
+`auto` is decided when the library is loaded, so set `COLORIZER_MODE` before
+loading it:
+
+    COLORIZER_MODE=auto
+    source "folder/to/Colorizer/Library/colorizer.sh"
+    PS4="$(colorize -n '<cyan>+</cyan> ')"   # decided above, also inside $(...)
+
+The decision is not made again in every call, as `colorize` usually runs
+inside `$(...)`, where its output is a pipe and never a terminal. Run
+`colorize_detect` in your own shell to decide again, for example after
+redirecting the output or setting `COLORIZER_MODE=auto` after loading.
+`colorize_detect 2` decides for stderr instead of stdout. `never` and `always`
+apply right away, also when set after loading.
+
 ### Escape codes for other renderers
 
 Programs that format text themselves, such as a `jq` program or a `printf`

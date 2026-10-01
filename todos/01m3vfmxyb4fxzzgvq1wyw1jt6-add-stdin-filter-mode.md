@@ -18,7 +18,7 @@ colorizer.
 ## Proposal (input, not decided)
 
 - `colorize -f`: read stdin line by line, process each line like an
-  argument, print it. Combinable with `-s`, `-r` and the colour mode.
+  argument, print it. Combinable with `-s`, `-r` and `COLORIZER_MODE` (in place).
 - Each line is self-contained: tags must close on the same line. To
   decide whether that is a rule or whether the stack carries over lines.
 - Producers escape their text with `&amp;`, `&lt;`, `&gt;` (in jq:

@@ -38,6 +38,9 @@
 
 ### Added
 
+- `COLORIZER_MODE` (`always`, `never`, `auto`) and `colorize_detect`: in
+  `auto` mode colors are used only on a terminal, without `NO_COLOR` and with
+  a `TERM` other than `dumb`. The default stays `always`.
 - `colorize_code` prints the escape sequence of one or more tags, combined,
   for programs that format text themselves.
 - Text attribute tags: `bold`, `dim`, `italic`, `underline`,
