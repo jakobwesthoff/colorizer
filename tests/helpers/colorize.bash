@@ -99,8 +99,14 @@ ${script}" colorizer-test "$@" | cat -ve
 # Run `colorize` with the given arguments in the shell under test
 ###
 colorize_in_test_shell() {
-  # shellcheck disable=SC2016 # expanded by the shell under test
   in_test_shell 'colorize "$@"' "$@"
+}
+
+###
+# Like colorize_in_test_shell, but marks every line end with `$`
+###
+colorize_in_test_shell_showing_line_ends() {
+  in_test_shell_showing_line_ends 'colorize "$@"' "$@"
 }
 
 ###

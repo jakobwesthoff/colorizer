@@ -1,0 +1,3 @@
+# The tests hand scripts to the shell under test as single-quoted strings, so
+# `$1` and friends are meant to stay unexpanded until that shell runs them.
+disable=SC2016
