@@ -83,8 +83,8 @@ Bug todos written while building the suite, each with its detecting test:
 - `01m3vjjpv54172b98ekcekpfj2` malformed markup returns status 0
 - `01m3vjjpv54172b98ekcekpfj3` stray closing tag reports garbage (fixed)
 - `01m3vjjpv54172b98ekcekpfj4` a `<` without `>` loops forever (fixed)
-- `01m3vjjpv54172b98ekcekpfj5` invalid tag names break the output
-- `01m3vjjpv54172b98ekcekpfj6` tag text runs as a command (security)
+- `01m3vjjpv54172b98ekcekpfj5` invalid tag names break the output (fixed)
+- `01m3vjjpv54172b98ekcekpfj6` tag text runs as a command (security) (fixed)
 - `01m3vjvakjz2b1z1rn3d13tqdc` `colourise` missing in bash scripts (fixed)
 - `01m3vjvakkc14se0106bstkvma` loading under `set -u` fails in zsh and ash (fixed)
 - `01m3vk1qb40aghhdk8ngs7yz5r` `ARRAY_push` evaluates its value (fixed)

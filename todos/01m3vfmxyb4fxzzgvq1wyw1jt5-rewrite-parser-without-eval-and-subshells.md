@@ -9,12 +9,9 @@ called through `$(...)`.
 
 ## Problems
 
-- **Input reaches `eval`.** The palette lookups evaluate tag text; in zsh
-  the tag `x:-$(cmd)` runs `cmd` (bug `01m3vjjpv54172b98ekcekpfj6`).
-  Callers that escape their text are safe
-  (`01m3vfmxyb4fxzzgvq1wyw1jt0`); callers that do not are not.
-- **A `<` before a later `>` empties the output.** `colorize "a < b > c"`:
-  `bad substitution` on stderr, empty line, in bash and ash.
+- **`eval` on tag names.** The palette lookups paste the tag name into
+  `eval`. Names are checked against `[A-Za-z0-9_-]*` first, so input
+  cannot run code, but every lookup is still an `eval`.
 - **Errors replace the text.** A mismatched or unclosed tag runs `echo` of
   the error and `exit 42` inside `$(COLORIZER_process_input ...)`
   (line 188). The subshell exits, `local` masks the status, and `colorize`
@@ -33,8 +30,9 @@ called through `$(...)`.
   tag name, pushed and popped with `${stack% *}` / `${stack##* }`. No
   arrays, no `eval`, no subshell; parameter expansion that the default
   (POSIX) layer can use too.
-- Tag names must match `[A-Za-z0-9_-]+`. Anything else after `<` is
-  literal text, so `a < b` prints as is.
+- In place already: a tag name must match `[A-Za-z0-9_-]*`, and anything
+  else between `<` and `>`, or a `<` with no `>` after it, is printed as
+  text.
 - Lookup: bash `${!name}`, zsh `${(P)name}`. The default layer has no
   indirect expansion and keeps `eval`, which is safe once the name is
   validated.

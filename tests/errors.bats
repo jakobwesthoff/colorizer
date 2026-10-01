@@ -60,17 +60,20 @@ colorize \"\$1\"" colorizer-test "${1}"
   assert_output '^[[mx^[[0m'
 }
 
-# Bug todo 01m3vjjpv54172b98ekcekpfj5: the tag name is pasted into
-# `${COLORIZER_...}`, where a space is a syntax error.
-@test "a tag name with a space: no output in bash and ash, a reset in zsh" {
+# Only names that can be part of a variable name are tags, so text between
+# `<` and `>` never reaches the palette lookup's `eval` as code.
+@test "a tag name that is not a variable name is printed as text" {
   run --separate-stderr colorize_in_test_shell '<red >x</red >'
 
   assert_status 0
-  [[ "${stderr}" == *"bad substitution"* ]]
-  case "$(test_shell_kind)" in
-    zsh) assert_output '^[[mx^[[0m' ;;
-    *) assert_output '' ;;
-  esac
+  assert_output '<red >x</red >'
+  [ -z "${stderr}" ]
+
+  run --separate-stderr colorize_in_test_shell 'a < b > c <red>d</red>'
+
+  assert_status 0
+  assert_output 'a < b > c ^[[0;31md^[[0m'
+  [ -z "${stderr}" ]
 }
 
 # Without a `>` after it, a `<` cannot start a tag; the rest of the text is
@@ -93,15 +96,18 @@ colorize \"\$1\"" colorizer-test "${1}"
   assert_output $'\e[0;31mx\e[0m if 1 < 2'
 }
 
-# Bug todo 01m3vjjpv54172b98ekcekpfj6: the palette lookup evaluates
-# `${COLORIZER_x:_$(...)}`, and zsh runs the command substitution in it.
-@test "a command substitution in tag text runs in zsh" {
+@test "tag text is never run as a command" {
   export MARKER="${BATS_TEST_TMPDIR}/ran"
 
-  run --separate-stderr colorize_in_test_shell 'a<x:-$(touch $MARKER)>b</x:-$(touch $MARKER)>'
+  run colorize_in_test_shell 'a<x:-$(touch $MARKER)>b</x:-$(touch $MARKER)>'
 
-  case "$(test_shell_kind)" in
-    zsh) [ -e "${MARKER}" ] ;;
-    *) [ ! -e "${MARKER}" ] ;;
-  esac
+  [ ! -e "${MARKER}" ]
+
+  run colorize_in_test_shell 'a<x$(touch $MARKER)>b</x$(touch $MARKER)>'
+
+  [ ! -e "${MARKER}" ]
+
+  run colorize_in_test_shell 'a<x`touch $MARKER`>b</x`touch $MARKER`>'
+
+  [ ! -e "${MARKER}" ]
 }
