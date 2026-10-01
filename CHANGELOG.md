@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## v2.0.0 - 2026-10-01
+
+A major version, as callers can see the changed behaviour: errors and
+unknown options are reported on stderr with status 42 and no longer end the
+calling script, and text that is not a tag is printed as it is.
 
 ### Changed
 
@@ -50,3 +54,8 @@
 - The README documents custom tags and themes (`COLORIZER_<name>`).
 - A test suite (bats, run through just) for bash, zsh and busybox ash, on the
   host and in Docker for bash 3.2, 4.4 and 5.2.
+
+## v1.0.0 - 2025-10-28
+
+The library as it was before this changelog was started, tagged afterwards
+as the baseline for v2.0.0.
