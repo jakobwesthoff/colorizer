@@ -1,0 +1,7 @@
+[[view]]
+name = "by-tag"
+field = "tags"
+
+[[view]]
+name = "by-component"
+field = "component"
