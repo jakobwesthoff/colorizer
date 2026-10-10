@@ -85,7 +85,7 @@ setup_file() {
   assert_output '-x is text'
 }
 
-# Documented in todo 01m3vfmxyb4fxzzgvq1wyw1jsx: text needs `--` before it.
+# Documented in todo 01M3VFMXYB4FXZZGVQ1WYW1JSX-document-before-text-that-may-start-with-a-dash.md: text needs `--` before it.
 @test "text that is an option is taken as one" {
   run colorize_in_test_shell_showing_line_ends '-n'
 

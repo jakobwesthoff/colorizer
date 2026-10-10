@@ -100,7 +100,7 @@ setup_file() {
   assert_output 'a > b'
 }
 
-# Decoding &amp; is proposed in todo 01m3vfmxyb4fxzzgvq1wyw1jt0.
+# Decoding &amp; is proposed in todo 01M3VFMXYB4FXZZGVQ1WYW1JT0-decode-amp-and-add-colorizeescape-for-untrusted-text.md.
 @test "&amp; is not decoded" {
   run colorize_in_test_shell '&amp; &amp;lt;'
 

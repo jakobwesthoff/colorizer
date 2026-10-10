@@ -46,7 +46,7 @@ setup_file() {
 }
 
 # Styles replace each other instead of combining; combining is proposed in
-# todo 01m3vfmxyb4fxzzgvq1wyw1jt4.
+# todo 01M3VFMXYB4FXZZGVQ1WYW1JT4-add-an-opt-in-nesting-mode-that-combines-styles.md.
 @test "a colour inside an attribute drops the attribute, and keeps the colour after closing" {
   run in_test_shell 'COLORIZER_bold=1; colorize "$1"' '<bold>a<red>b</red>c</bold>'
 
